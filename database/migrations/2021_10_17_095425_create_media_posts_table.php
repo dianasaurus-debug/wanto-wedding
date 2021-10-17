@@ -18,8 +18,8 @@ class CreateMediaPostsTable extends Migration
             $table->string('filename');
             $table->string('deskripsi');
             $table->string('ext');
-            $table->bigInteger('id_posts')->unsigned();
-            $table->foreign('id_posts')->references('id')->on('posts')->onDelete('cascade');
+            $table->bigInteger('post_id')->unsigned();
+            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }

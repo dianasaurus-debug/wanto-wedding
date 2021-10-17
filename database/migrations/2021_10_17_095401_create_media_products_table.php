@@ -18,8 +18,8 @@ class CreateMediaProductsTable extends Migration
             $table->string('filename');
             $table->string('deskripsi');
             $table->string('ext');
-            $table->bigInteger('id_product')->unsigned();
-            $table->foreign('id_product')->references('id')->on('products')->onDelete('cascade');
+            $table->bigInteger('product_id')->unsigned();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();
         });
     }
