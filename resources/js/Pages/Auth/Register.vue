@@ -3,17 +3,19 @@
 
     <jet-authentication-card>
         <template #logo>
-            <jet-authentication-card-logo />
+            <h3>Daftar</h3>
         </template>
-
         <jet-validation-errors class="mb-4" />
 
         <form @submit.prevent="submit">
             <div>
-                <jet-label for="name" value="Name" />
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus autocomplete="name" />
+                <jet-label for="name" value="Nama Depan" />
+                <jet-input id="nama_depan" type="text" class="mt-1 block w-full" v-model="form.nama_depan" required autofocus autocomplete="nama_depan" />
             </div>
-
+            <div class="mt-4">
+                <jet-label for="name" value="Nama Belakang" />
+                <jet-input id="nama_belakang" type="text" class="mt-1 block w-full" v-model="form.nama_belakang" required autofocus autocomplete="nama_belakang" />
+            </div>
             <div class="mt-4">
                 <jet-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required />
@@ -81,7 +83,8 @@
         data() {
             return {
                 form: this.$inertia.form({
-                    name: '',
+                    nama_depan: '',
+                    nama_belakang: '',
                     email: '',
                     password: '',
                     password_confirmation: '',

@@ -43,9 +43,16 @@
 
             <!-- Name -->
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="name" value="Name" />
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autocomplete="name" />
-                <jet-input-error :message="form.errors.name" class="mt-2" />
+                <jet-label for="nama_depan" value="Nama Depan" />
+                <jet-input id="nama_depan" type="text" class="mt-1 block w-full" v-model="form.nama_depan" autocomplete="nama_depan" />
+                <jet-input-error :message="form.errors.nama_depan" class="mt-2" />
+            </div>
+
+            <!-- Name -->
+            <div class="col-span-6 sm:col-span-4">
+                <jet-label for="nama_belakang" value="Nama Belakang" />
+                <jet-input id="nama_belakang" type="text" class="mt-1 block w-full" v-model="form.nama_belakang" autocomplete="nama_belakang" />
+                <jet-input-error :message="form.errors.nama_belakang" class="mt-2" />
             </div>
 
             <!-- Email -->
@@ -95,8 +102,9 @@
             return {
                 form: this.$inertia.form({
                     _method: 'PUT',
-                    name: this.user.name,
+                    nama_depan: this.user.nama_depan,
                     email: this.user.email,
+                    nama_belakang: this.user.nama_belakang,
                     photo: null,
                 }),
 

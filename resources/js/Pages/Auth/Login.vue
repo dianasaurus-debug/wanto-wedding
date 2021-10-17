@@ -3,7 +3,8 @@
 
     <jet-authentication-card>
         <template #logo>
-            <jet-authentication-card-logo />
+<!--            <jet-authentication-card-logo />-->
+            <h3>Login</h3>
         </template>
 
         <jet-validation-errors class="mb-4" />
