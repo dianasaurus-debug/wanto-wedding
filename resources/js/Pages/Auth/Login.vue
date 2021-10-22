@@ -2,10 +2,10 @@
     <Head title="Log in" />
 
     <jet-authentication-card>
-        <template #logo>
-<!--            <jet-authentication-card-logo />-->
-            <h3>Login</h3>
-        </template>
+<!--        <template #logo>-->
+<!--&lt;!&ndash;            <jet-authentication-card-logo />&ndash;&gt;-->
+<!--            <h3>Login</h3>-->
+<!--        </template>-->
 
         <jet-validation-errors class="mb-4" />
 

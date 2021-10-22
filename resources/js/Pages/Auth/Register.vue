@@ -2,9 +2,9 @@
     <Head title="Register" />
 
     <jet-authentication-card>
-        <template #logo>
-            <h3>Daftar</h3>
-        </template>
+<!--        <template #logo>-->
+<!--            <h3>Daftar</h3>-->
+<!--        </template>-->
         <jet-validation-errors class="mb-4" />
 
         <form @submit.prevent="submit">
