@@ -4,7 +4,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\JasaController;
+use App\Http\Controllers\BankAccountController;
+use App\Http\Controllers\PostController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,6 +29,11 @@ Route::get('/', function () {
     return Redirect::to('login');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+   Route::resource('jasa', JasaController::class);
+   Route::resource('akun-bank', BankAccountController::class);
+   Route::resource('post', PostController::class);
+
+
+});
