@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MediaProduct;
 use App\Models\Product;
+use App\Models\ProductCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
+use Intervention\Image\Facades\Image;
 
 class JasaController extends Controller
 {
@@ -24,22 +29,70 @@ class JasaController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create()
     {
-        //
+        $allkategori = ProductCategory::get();
+        return Inertia::render('Jasa/Create', ['allkategori' => $allkategori]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'image_posts' => 'required',
+            'image_posts.*' => 'mimes:jpeg,jpg,png,gif,csv,txt,pdf|max:2048',
+            'nama' => 'required|string',
+            'harga' => 'required',
+            'deskripsi' => 'required',
+            'cover' => 'required',
+            'nominal_dp' => 'required',
+            'cover.' => 'mimes:jpeg,jpg,png,gif,csv,txt,pdf|max:2048'
+        ]);
+        try{
+            if($request->hasfile('cover')&&$request->hasfile('image_posts')) {
+                $file_cover = $request->file('cover');
+                $file_ext = $file_cover->getClientOriginalExtension();
+                $file_name = 'vendor_cover_'.time().'.'.$file_ext;
+                $file_cover->move(public_path().'/images/uploads/', $file_name);
+                $product = Product::create([
+                    'nama' => $request->nama,
+                    'harga' => convert_to_nominal($request->harga),
+                    'deskripsi' => $request->deskripsi,
+                    'cover' => $file_name,
+                    'nominal_dp' => convert_to_nominal($request->nominal_dp),
+                    'category_id' => $request->category_id,
+                    'created_by' => Auth::id()
+                ]);
+                foreach($request->file('image_posts') as $file)
+                {
+                    $ext = $file->getClientOriginalExtension();
+                    $name = 'media_vendor_'.time().'.'.$ext;
+                    MediaProduct::create([
+                       'filename' => $name,
+                        'ext' => $ext,
+                        'product_id' => $product->id
+                    ]);
+                    $file->move(public_path().'/images/uploads/vendor/', $name);
+                }
+                return redirect()->route('jasa.index')
+                    ->with('message', 'Product Created Successfully.');
+            } else {
+                return redirect()->route('jasa.index')
+                    ->with('message', 'Product Failed to create.');
+
+            }
+
+        } catch (\Exception $e){
+            return $e->getMessage();
+        }
+
     }
 
     /**
@@ -50,7 +103,11 @@ class JasaController extends Controller
      */
     public function show($id)
     {
-        //
+        $jasa = Product::where('id', $id)
+            ->with('category')
+            ->with('media')
+            ->first();
+        return Inertia::render('Jasa/Show', ['jasa' => $jasa]);
     }
 
     /**
@@ -80,10 +137,42 @@ class JasaController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy($id)
     {
-        //
+        try {
+            $product = Product::findOrFail($id);
+            $medias = MediaProduct::where('product_id', $product->id)->get();
+            foreach ($medias as $media){
+                $path_image = public_path('/images/uploads/vendor/'.$media->filename);
+                if(File::exists($path_image)) {
+                    File::delete($path_image);
+                }
+                $media->delete();
+
+            }
+            $product_image = public_path('/images/uploads/'.$product->cover);
+            if(File::exists($product_image)) {
+                File::delete($product_image);
+            }
+            $product->delete();
+            $data = array(
+                'success' => true,
+                'message' => 'Berhasil menghapus data product',
+                'data' => $product,
+            );
+            return redirect()->route('jasa.index')
+                ->with('message', 'Product Deleted Successfully.');
+        } catch (\Exception $exception) {
+            $data = array(
+                [
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan : '.$exception->getMessage()
+                ]
+            );
+            return redirect()->route('jasa.index')
+                ->with('message', 'Product gagal dihapus.');
+        }
     }
 }

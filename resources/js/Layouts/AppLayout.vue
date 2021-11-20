@@ -23,29 +23,32 @@
                 <SideBarLink :active="route().current('jasa.index')">
                     <i class="fas fa-briefcase h-6 w-6 fill-current mr-2"></i>
                     <Link :href="route('jasa.index')" class="text-gray-700">
-                        Jasa
+                        Vendor
                     </Link>
                 </SideBarLink>
 
-                <div
-                    class="w-full flex items-center text-blue-400 h-10 pl-4 hover:bg-gray-200 rounded-lg cursor-pointer">
+                <SideBarLink :active="route().current('booking.index')">
                     <i class="fas fa-folder-plus h-6 w-6 fill-current mr-2"></i>
-                    <span class="text-gray-700">Booking</span>
-                </div>
-                <div
-                    class="w-full flex items-center text-blue-400 h-10 pl-4 hover:bg-gray-200 rounded-lg cursor-pointer">
+                    <Link :href="route('booking.index')" class="text-gray-700">
+                        Booking
+                    </Link>
+                </SideBarLink>
+                <SideBarLink :active="route().current('pembayaran.index')">
                     <i class="fas fa-money-bill-wave h-6 w-6 fill-current mr-2"></i>
-                    <span class="text-gray-700">Pembayaran</span>
-                </div>
-                <div
-                    class="w-full flex items-center text-blue-400 h-10 pl-4 hover:bg-gray-200 rounded-lg cursor-pointer">
+                    <Link :href="route('pembayaran.index')" class="text-gray-700">
+                        Pembayaran
+                    </Link>
+                </SideBarLink>
+                <SideBarLink :active="route().current('jadwal.index')">
                     <i class="fas fa-calendar-alt h-6 w-6 fill-current mr-2"></i>
-                    <span class="text-gray-700">Jadwal</span>
-                </div>
+                    <Link :href="route('jadwal.index')" class="text-gray-700">
+                        Jadwal
+                    </Link>
+                </SideBarLink>
                 <SideBarLink :active="route().current('post.index')">
                     <i class="fas fa-list h-6 w-6 fill-current mr-2"></i>
                     <Link :href="route('post.index')" class="text-gray-700">
-                        Post
+                        Katalog
                     </Link>
                 </SideBarLink>
                 <SideBarLink :active="route().current('akun-bank.index')">

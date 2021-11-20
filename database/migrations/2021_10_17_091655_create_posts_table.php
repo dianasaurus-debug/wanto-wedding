@@ -20,7 +20,7 @@ class CreatePostsTable extends Migration
             $table->bigInteger('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('category_id')->unsigned();
-            $table->foreign('category_id')->references('id')->on('post_categories')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('product_categories')->onDelete('cascade');
             $table->text('isi');
             $table->timestamps();
         });

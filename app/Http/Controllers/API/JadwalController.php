@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 
-class PaymentController extends Controller
+class JadwalController extends Controller
 {
-    public function daftar_pembayaran(Request $request){
+    public function daftar_jadwal(Request $request){
         try {
             $jadwal = Schedule::whereHas('booking', function($q){
                 $q->where('customer_id', auth()->user()->id);

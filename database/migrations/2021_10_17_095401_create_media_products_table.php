@@ -16,7 +16,6 @@ class CreateMediaProductsTable extends Migration
         Schema::create('media_products', function (Blueprint $table) {
             $table->id();
             $table->string('filename');
-            $table->string('deskripsi');
             $table->string('ext');
             $table->bigInteger('product_id')->unsigned();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');

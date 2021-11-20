@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PostResource;
-use App\Models\Post;
+use App\Models\BankAccount;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class BankAccountController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,16 +15,14 @@ class PostController extends Controller
      */
     public function index()
     {
-        $post_resource = [];
 
         try {
-            $all_post = Post::all();
-            if ($all_post)
-                $post_resource = PostResource::collection($all_post);
+            $all_bank = BankAccount::all();
+
             $data = array(
                 'status' => 'success',
-                'message' => 'Berhasil menampilkan data post',
-                'data' => $post_resource,
+                'message' => 'Berhasil menampilkan data bank',
+                'data' => $all_bank,
             );
             return response()->json($data);
         } catch (\Exception $exception) {
@@ -69,14 +66,13 @@ class PostController extends Controller
     public function show($id)
     {
         try {
-            $post = Post::where('id', $id)->first();
-            $post_resource = '';
-            if ($post)
-                $post_resource = new PostResource($post);
+            $bank = BankAccount::where('id', $id)
+                ->with('media')
+                ->first();
             $data = array(
                 'status' => 'success',
-                'message' => 'Berhasil menampilkan data post',
-                'data' => $post_resource,
+                'message' => 'Berhasil menampilkan data bank',
+                'data' => $bank,
             );
             return response()->json($data);
         } catch (\Exception $exception) {

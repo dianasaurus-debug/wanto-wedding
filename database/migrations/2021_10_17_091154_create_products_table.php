@@ -18,9 +18,12 @@ class CreateProductsTable extends Migration
             $table->string('nama');
             $table->string('cover');
             $table->string('harga');
+            $table->string('nominal_dp');
+            $table->bigInteger('category_id')->unsigned();
+            $table->foreign('category_id')->references('id')->on('product_categories')->onDelete('cascade');
             $table->bigInteger('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
-            $table->text('dekripsi');
+            $table->text('deskripsi');
             $table->timestamps();
         });
     }

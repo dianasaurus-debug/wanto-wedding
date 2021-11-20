@@ -17,4 +17,12 @@ class Booking extends Model
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+    }
+    public function schedule()
+    {
+        return $this->hasOne(Schedule::class, 'booking_id', 'id');
+    }
 }

@@ -8,13 +8,19 @@
 
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+<!--                <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3" role="alert" v-if="$page.flash.message">-->
+<!--                    <div class="flex">-->
+<!--                        <div>-->
+<!--                            <p class="text-sm">{{ $page.flash.message }}</p>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4">
                     <div class="flex justify-between ...">
                         <div>
-                            <button
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3">
+                            <inertia-link :href="route('jasa.create')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3">
                                 Tambah Data
-                            </button>
+                            </inertia-link>
                         </div>
                         <!--                        <div>-->
                         <!--                            <button @click="clearSearch" v-if="isSearching"-->
@@ -58,8 +64,8 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="row in alljasa.data">
-                                <td class="border px-4 py-2">{{ row.id }}</td>
+                            <tr v-for="(row, i) in alljasa.data">
+                                <td class="border px-4 py-2">{{i+1 }}</td>
                                 <td class="border px-4 py-2">{{ row.nama }}</td>
                                 <td class="border px-4 py-2">{{ row.harga }}</td>
                                 <td class="border px-4 py-2">{{ row.user.nama_depan }} {{row.user.nama_belakang}}</td>
@@ -68,7 +74,7 @@
                                         class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded mr-2">
                                         Ubah Data
                                     </button>
-                                    <button
+                                    <button @click="deleteRow(row)"
                                         class="bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded">Hapus
                                         Data
                                     </button>
@@ -91,6 +97,7 @@
 <script>
 import { defineComponent } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
+
 // import Welcome from '@/Jetstream/Welcome.vue'
 import Pagination from "@/Shared/Pagination";
 export default defineComponent({
@@ -100,5 +107,14 @@ export default defineComponent({
         // Welcome,
     },
     props: ['alljasa'],
+    methods:{
+        deleteRow: function (data) {
+            if (!confirm('Are you sure want to remove?')) return;
+            data._method = 'DELETE';
+            this.$inertia.post('/jasa/' + data.id, data)
+            this.reset();
+            this.closeModal();
+        }
+    }
 })
 </script>

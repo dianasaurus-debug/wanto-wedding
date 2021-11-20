@@ -5,13 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PostCategory extends Model
+class Schedule extends Model
 {
     use HasFactory;
     protected $guarded = [];
-
-    public function post()
+    public function booking()
     {
-        return $this->hasMany(Post::class, 'category_id', 'id');
+        return $this->belongsTo(Booking::class, 'booking_id', 'id');
     }
 }
