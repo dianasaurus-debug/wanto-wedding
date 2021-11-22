@@ -17,7 +17,6 @@ class PostController extends Controller
     public function index()
     {
         $post_resource = [];
-
         try {
             $all_post = Post::all();
             if ($all_post)

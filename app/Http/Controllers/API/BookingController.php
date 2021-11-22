@@ -49,7 +49,6 @@ class BookingController extends Controller
             return response()->json($data, 400);
         } else {
             try {
-
                 $time_from = $request->start_booking;
                 $time_to = $request->end_booking;
                 $jadwal_not_available = Schedule::where(function ($q) use ($time_from, $time_to) {

@@ -31,14 +31,22 @@
                 </label>
             </div>
 
-            <div class="flex items-center justify-end mt-4">
-                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
-                    Forgot your password?
-                </Link>
+                <div class="flex justify-between items-center mt-3">
+                    <div>
+                        <Link :href="route('register')" class="underline text-sm text-gray-600 hover:text-gray-900">
+                            Daftar
+                        </Link>
+                    </div>
+                    <div>
+                        <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
+                            Forgot your password?
+                        </Link>
 
-                <jet-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </jet-button>
+                        <jet-button class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                            Log in
+                        </jet-button>
+                    </div>
+
             </div>
         </form>
     </jet-authentication-card>

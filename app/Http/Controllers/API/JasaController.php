@@ -14,16 +14,11 @@ class JasaController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request)
+    public function index(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
     {
-//        $product_resource = [];
-
         try {
-//            $all_jasa = Product::with('media')->get();
-//            if ($all_jasa)
-//                $product_resource = ProductResource::collection($all_jasa);
             $all_jasa = Product::with('category')->get()
-                ->groupBy('category_id');
+                ->groupBy('category_id'); //Proses mendapatkan data dari tabel product
             $data = array(
                 'status' => 'success',
                 'message' => 'Berhasil menampilkan data vendor',
@@ -68,11 +63,11 @@ class JasaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function show($id) // $id = 2
     {
         try {
             $jasa = Product::where('id', $id)
-                ->with('media')
+                ->with('media') //dengan galerinya juga..
                 ->first();
             $product_resource = '';
             if ($jasa)

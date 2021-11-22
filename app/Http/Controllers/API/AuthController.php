@@ -29,7 +29,7 @@ class AuthController extends Controller
             $user = User::create([
                 'nama_depan' => $request->nama_depan,
                 'nama_belakang' => $request->nama_belakang,
-                'is_admin' => 0,
+                'is_admin' => 0, //Kalau 0 itu customer kalau 1 itu admin
                 'email' => $request->email,
                 'password' => Hash::make($request->password)
             ]);

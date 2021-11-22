@@ -13,9 +13,8 @@ class BankAccountController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index() // /
     {
-
         try {
             $all_bank = BankAccount::all();
 
@@ -66,9 +65,7 @@ class BankAccountController extends Controller
     public function show($id)
     {
         try {
-            $bank = BankAccount::where('id', $id)
-                ->with('media')
-                ->first();
+            $bank = BankAccount::where('id', $id)->first();
             $data = array(
                 'status' => 'success',
                 'message' => 'Berhasil menampilkan data bank',

@@ -94,7 +94,7 @@ class BankAccountController extends Controller
             'nomor_rekening' => 'required',
         ])->validate();
         try {
-            $bank=BankAccount::where('id', $id)->first();
+            $bank = BankAccount::where('id', $id)->first();
             $bank->update(['nama_bank' => $request->nama_bank]);
             $bank->update(['nomor_rekening' => $request->nomor_rekening]);
 
