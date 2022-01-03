@@ -24,6 +24,7 @@ class CreateProductsTable extends Migration
             $table->bigInteger('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->text('deskripsi');
+            $table->integer('jumlah_dilihat')->nullable()->default(0);
             $table->timestamps();
         });
     }

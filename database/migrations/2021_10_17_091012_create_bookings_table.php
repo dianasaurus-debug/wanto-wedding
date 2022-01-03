@@ -20,9 +20,7 @@ class CreateBookingsTable extends Migration
             $table->bigInteger('customer_id')->unsigned();
             $table->foreign('customer_id')->references('id')->on('users')->onDelete('cascade');
             $table->bigInteger('product_id')->unsigned();
-            $table->foreign('product_id')->references('id')->on('users')->onDelete('cascade');
-            $table->bigInteger('payment_id')->unsigned()->nullable();
-            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->text('dekripsi')->nullable();
             $table->timestamps();
         });

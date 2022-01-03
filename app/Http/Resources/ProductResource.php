@@ -23,7 +23,9 @@ class ProductResource extends JsonResource
             'galeri' => $this->media,
             'category_id' => $this->category_id,
             'category_name' => $this->category->nama_kategori,
-            'category' => $this->category
+            'category' => $this->category,
+            'reviews' => $this->reviews,
+            'rating_mean' => $this->rating_mean
         ];
     }
 }

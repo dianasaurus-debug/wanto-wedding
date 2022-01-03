@@ -14,6 +14,10 @@ class Post extends Model
     {
         return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
     }
+    public function adatcategory()
+    {
+        return $this->belongsTo(KategoriAdat::class, 'adatcategory_id', 'id');
+    }
     public function media()
     {
         return $this->hasMany(MediaPost::class, 'post_id', 'id');

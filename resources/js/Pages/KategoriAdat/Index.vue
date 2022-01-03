@@ -2,7 +2,7 @@
     <app-layout title="Akun Bank">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Akun Bank
+                Kategori Adat
             </h2>
         </template>
 
@@ -12,7 +12,7 @@
                     <div class="flex justify-between ...">
                         <div>
                             <button @click="openModal()"
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3">
+                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-3">
                                 Tambah Data
                             </button>
                         </div>
@@ -45,37 +45,33 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="allakun.data.length>0">
+                    <div v-if="alladat.data.length>0">
                         <table class="table-fixed w-full">
                             <thead>
                             <tr class="bg-gray-100">
                                 <th class="px-4 py-2 w-20">No.</th>
-                                <th class="px-4 py-2">Nama Bank</th>
-                                <th class="px-4 py-2">Nomor Rekening</th>
-                                <th class="px-4 py-2">Atas Nama</th>
+                                <th class="px-4 py-2">Nama Kategori</th>
                                 <th class="px-4 py-2">Aksi</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(row, i) in allakun.data">
+                            <tr v-for="(row, i) in alladat.data">
                                 <td class="border px-4 py-2">{{ i+1 }}</td>
-                                <td class="border px-4 py-2">{{ row.nama_bank }}</td>
-                                <td class="border px-4 py-2">{{ row.nomor_rekening }}</td>
-                                <td class="border px-4 py-2">{{ row.acc_holder }}</td>
+                                <td class="border px-4 py-2">{{ row.nama_kategori }}</td>
                                 <td class="border px-4 py-2">
                                     <button @click="edit(row)"
-                                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
                                         Ubah Data
                                     </button>
                                     <button @click="deleteRow(row)"
-                                        class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Hapus
+                                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Hapus
                                         Data
                                     </button>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
-                        <pagination class="mt-6" :links="allakun.links"/>
+                        <pagination class="mt-6" :links="alladat.links"/>
                     </div>
                     <div v-else>
                         <h5 class="text-gray-400 font-medium font-bold text-center"> Belum ada data</h5>
@@ -97,16 +93,8 @@
                         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div class="">
                                 <div class="mb-4">
-                                    <label for="exampleFormControlInput1" class="block text-gray-700 text-sm font-bold mb-2">Nama Bank:</label>
-                                    <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleFormControlInput1" placeholder="Masukkan nama bank" v-model="form.nama_bank">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="exampleFormControlInput1" class="block text-gray-700 text-sm font-bold mb-2">Atas Nama:</label>
-                                    <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleFormControlInput1" placeholder="Masukkan pemilik rekening bank" v-model="form.acc_holder">
-                                </div>
-                                <div class="mb-4">
-                                    <label for="exampleFormControlInput2" class="block text-gray-700 text-sm font-bold mb-2">Nomor Rekening:</label>
-                                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleFormControlInput2" v-model="form.nomor_rekening" placeholder="Masukkan rekening bank">
+                                    <label for="exampleFormControlInput1" class="block text-gray-700 text-sm font-bold mb-2">Nama Kategori:</label>
+                                    <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleFormControlInput1" placeholder="Masukkan nama kategori adat" v-model="form.nama_kategori">
                                 </div>
                             </div>
                         </div>
@@ -147,7 +135,7 @@ export default defineComponent({
         Pagination
         // Welcome,
     },
-    props: ['allakun'],
+    props: ['alladat'],
     created(){
         this.isSearching = !!new URLSearchParams(window.location.search).get('cari');
     },
@@ -156,9 +144,7 @@ export default defineComponent({
             editMode: false,
             isOpen: false,
             form: {
-                nama_bank: null,
-                nomor_rekening: null,
-                acc_holder:null
+                nama_kategori: null,
             },
             query: '',
             isSearching: false,
@@ -166,7 +152,7 @@ export default defineComponent({
     },
     methods: {
         searchData: function () {
-            this.$inertia.get(`/akun-bank?cari=${this.query}`)
+            this.$inertia.get(`/kategori-adat?cari=${this.query}`)
         },
         openModal: function () {
             this.isOpen = true;
@@ -178,12 +164,11 @@ export default defineComponent({
         },
         reset: function () {
             this.form = {
-                nama_bank: null,
-                nomor_rekening: null,
+                nama_kategori: null,
             }
         },
         save: function (data) {
-            this.$inertia.post('/akun-bank', data)
+            this.$inertia.post('/kategori-adat', data)
             this.reset();
             this.closeModal();
             this.editMode = false;
@@ -195,20 +180,20 @@ export default defineComponent({
         },
         update: function (data) {
             data._method = 'PUT';
-            this.$inertia.post('/akun-bank/' + data.id, data)
+            this.$inertia.post('kategori-adat/' + data.id, data)
             this.reset();
             this.closeModal();
         },
         deleteRow: function (data) {
             if (!confirm('Are you sure want to remove?')) return;
             data._method = 'DELETE';
-            this.$inertia.post('/akun-bank/' + data.id, data)
+            this.$inertia.post('kategori-adat/' + data.id, data)
             this.reset();
             this.closeModal();
         },
         clearSearch: function () {
             this.query = '';
-            this.$inertia.get(`/akun-bank`)
+            this.$inertia.get(`kategori-adat`)
         },
     }
 })

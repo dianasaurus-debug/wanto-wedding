@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriAdat;
 use App\Models\Post;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
@@ -18,12 +19,26 @@ class PostController extends Controller
      */
     public function index()
     {
-        $allpost = Post::latest()
-            ->with('user')
-            ->with('category')
-            ->paginate(6);
+        if (request()->query('cari')) {
+            $allpost = Post::where('judul', 'like', '%' . request()->query('cari') . '%')
+                ->orWhere('isi', 'like', '%' . request()->query('cari') . '%')
+                ->latest()
+                ->with('user')
+                ->with('category')
+                ->with('adatcategory')
+                ->paginate(7);
+        } else {
+            $allpost = Post::where('judul', 'like', '%' . request()->query('cari') . '%')
+                ->orWhere('isi', 'like', '%' . request()->query('cari') . '%')
+                ->latest()
+                ->with('user')
+                ->with('category')
+                ->with('adatcategory')
+                ->paginate(7);
+        }
         $allkategori = ProductCategory::get();
-        return Inertia::render('Post/Index', ['allpost' => $allpost, 'allkategori' => $allkategori]);
+        $alladat = KategoriAdat::get();
+        return Inertia::render('Post/Index', ['allpost' => $allpost, 'allkategori' => $allkategori, 'alladat' => $alladat]);
     }
 
     /**
@@ -61,6 +76,7 @@ class PostController extends Controller
                     'isi' => $request->isi,
                     'cover' => $file_name,
                     'category_id' => $request->category_id,
+                    'adatcategory_id' => $request->adatcategory_id,
                     'created_by' => Auth::id()
                 ]);
                 return redirect()->route('post.index')
@@ -127,12 +143,13 @@ class PostController extends Controller
                     'isi' => $request->isi,
                     'cover' => $file_name,
                     'category_id' => $request->category_id,
+                    'adatcategory_id' => $request->adatcategory_id
                 ]);
             } else {
                 $post->update([
                     'judul' => $request->judul,
                     'isi' => $request->isi,
-                    'category_id' => $request->category_id,
+                    'adatcategory_id' => $request->adatcategory_id,
                 ]);
             }
             return redirect()->route('post.index')
