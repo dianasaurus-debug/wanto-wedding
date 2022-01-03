@@ -19,10 +19,11 @@
                         <div>
                             <div class="pt-2 relative mx-auto text-gray-600">
 
-                                <form>
+                                <form @submit.prevent="searchData">
                                     <input
                                         class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                                        type="search" name="cari" placeholder="Search">
+                                        type="search" name="cari" placeholder="Search" v-model="query">
+
                                     <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">
                                         <svg class="text-gray-600 h-4 w-4 fill-current"
                                              xmlns="http://www.w3.org/2000/svg"
@@ -36,6 +37,10 @@
                                       </svg>
                                     </button>
                                 </form>
+                                <a @click="clearSearch" v-if="isSearching"
+                                   class="my-2 text-red" style="cursor : pointer">
+                                    Clear Search
+                                </a>
 
                             </div>
                         </div>
@@ -117,7 +122,6 @@
                               </button>
                             </span>
                             <span class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto">
-
                               <button @click="closeModal()" type="button" class="inline-flex justify-center w-full rounded-md border border-gray-300 px-4 py-2 bg-white text-base leading-6 font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue transition ease-in-out duration-150 sm:text-sm sm:leading-5">
                                 Cancel
                               </button>
@@ -144,6 +148,9 @@ export default defineComponent({
         // Welcome,
     },
     props: ['allakun'],
+    created(){
+        this.isSearching = !!new URLSearchParams(window.location.search).get('cari');
+    },
     data() {
         return {
             editMode: false,
@@ -153,9 +160,14 @@ export default defineComponent({
                 nomor_rekening: null,
                 acc_holder:null
             },
+            query: '',
+            isSearching: false,
         }
     },
     methods: {
+        searchData: function () {
+            this.$inertia.get(`/akun-bank?cari=${this.query}`)
+        },
         openModal: function () {
             this.isOpen = true;
         },
@@ -193,7 +205,11 @@ export default defineComponent({
             this.$inertia.post('/akun-bank/' + data.id, data)
             this.reset();
             this.closeModal();
-        }
+        },
+        clearSearch: function () {
+            this.query = '';
+            this.$inertia.get(`/akun-bank`)
+        },
     }
 })
 </script>

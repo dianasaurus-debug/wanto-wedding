@@ -1,5 +1,5 @@
 <template>
-    <app-layout title="Jasa">
+    <app-layout title="Katalog">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Katalog Inspirasi Pernikahan
@@ -25,10 +25,11 @@
                         <div>
                             <div class="pt-2 relative mx-auto text-gray-600">
 
-                                <form>
+                                <form @submit.prevent="searchData">
                                     <input
                                         class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                                        type="search" name="cari" placeholder="Search">
+                                        type="search" name="cari" placeholder="Search" v-model="query">
+
                                     <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">
                                         <svg class="text-gray-600 h-4 w-4 fill-current"
                                              xmlns="http://www.w3.org/2000/svg"
@@ -42,6 +43,10 @@
                                       </svg>
                                     </button>
                                 </form>
+                                <a @click="clearSearch" v-if="isSearching"
+                                   class="my-2 text-red" style="cursor : pointer">
+                                    Clear Search
+                                </a>
 
                             </div>
                         </div>
@@ -53,6 +58,7 @@
                                 <img class="w-full" :src="'images/uploads/katalog/'+row.cover" :alt="row.judul">
                                 <div class="p-4">
                                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{{row.category.nama_kategori}}</span>
+                                    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{{row.adatcategory_id!=null ? row.adatcategory.nama_kategori : 'Semua Adat'}}</span>
                                     <div class="font-bold text-xl mb-2">{{ row.judul }}</div>
                                     <p class="text-gray-700 text-base">
                                         {{ row.isi }}
@@ -121,6 +127,18 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="exampleFormControlInput2"
+                                           class="block text-gray-700 text-sm font-bold mb-2">Kategori Adat (Pilih semua adat jika tidak memakai adat tertentu):</label>
+                                    <select v-model="form.adatcategory_id"
+                                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                            type="text">
+                                        <option v-bind:value=null>Semua Adat</option>
+                                        <option v-for="kategori in alladat" v-bind:value="kategori.id">
+                                            {{ kategori.nama_kategori }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <label for="exampleFormControlInput2"
                                            class="block text-gray-700 text-sm font-bold mb-2">Gambar katalog:</label>
                                     <input type="file"
                                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -177,7 +195,10 @@ export default defineComponent({
         Pagination
         // Welcome,
     },
-    props: ['allpost', 'allkategori'],
+    props: ['allpost', 'allkategori', 'alladat'],
+    created(){
+        this.isSearching = !!new URLSearchParams(window.location.search).get('cari');
+    },
     data() {
         return {
             editMode: false,
@@ -186,12 +207,22 @@ export default defineComponent({
                 judul: null,
                 cover: null,
                 isi: null,
-                category_id: null
+                category_id: null,
+                adatcategory_id: null
             },
             previewImage: null,
+            query: '',
+            isSearching: false,
         }
     },
     methods: {
+        searchData: function () {
+            this.$inertia.get(`/post?cari=${this.query}`)
+        },
+        clearSearch: function () {
+            this.query = '';
+            this.$inertia.get(`/post`)
+        },
         openModal: function () {
             this.isOpen = true;
         },
@@ -205,7 +236,8 @@ export default defineComponent({
                     judul: null,
                     cover: null,
                     isi: null,
-                    category_id: null
+                    category_id: null,
+                    adatcategory_id: null
             };
             this.previewImage = null;
         },

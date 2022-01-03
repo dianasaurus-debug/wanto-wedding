@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\KategoriAdat;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductCategorySeeder::class);
         $this->call(UserSeeder::class);
         $this->call(BankAccountSeeder::class);
+        $this->call(KategoriAdatSeeder::class);
 
     }
 }

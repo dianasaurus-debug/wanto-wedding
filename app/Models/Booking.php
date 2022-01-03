@@ -19,10 +19,34 @@ class Booking extends Model
     }
     public function payment()
     {
-        return $this->belongsTo(Payment::class, 'payment_id', 'id');
+        return $this->hasMany(Payment::class, 'booking_id', 'id');
     }
     public function schedule()
     {
         return $this->hasOne(Schedule::class, 'booking_id', 'id');
+    }
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'booking_id', 'id');
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->where(function ($query) use ($search) {
+                $query->whereHas('product', function($q) use ($search) {
+                    $q->where('nama', 'like', '%' . $search . '%')
+                        ->orWhere('deskripsi', 'like', '%' . $search . '%');
+                })->orWhereHas('user', function($q) use ($search) {
+                    $q->where('nama_depan', 'like', '%'.$search.'%')
+                        ->orWhere('nama_belakang', 'like', '%'.$search.'%');
+                });
+
+            });
+        })->when($filters['kategori'] ?? null, function ($query, $kategori) {
+            $query->whereHas('product', function($q) use ($kategori) {
+                $q->where('category_id', $kategori);
+            });
+        });
     }
 }

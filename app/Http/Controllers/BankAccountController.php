@@ -16,8 +16,15 @@ class BankAccountController extends Controller
      */
     public function index()
     {
-        $allakun = BankAccount::latest()
-            ->paginate(5);
+        if (request()->query('cari')) {
+            $allakun = BankAccount::where('nama_bank', 'like', '%' . request()->query('cari') . '%')
+                ->orWhere('nomor_rekening', 'like', '%' . request()->query('cari') . '%')
+                ->latest()
+                ->paginate(7);
+        } else {
+            $allakun = BankAccount::latest()
+                ->paginate(7);
+        }
         return Inertia::render('BankAccount/Index', ['allakun' => $allakun]);
     }
 

@@ -21,7 +21,7 @@
                                     </div>
                                     <div class="flex-1 text-right md:text-center">
                                         <h5 class="font-bold uppercase text-gray-600">Total Vendor</h5>
-                                        <h3 class="font-bold text-3xl">10</h3>
+                                        <h3 class="font-bold text-3xl">{{all_data.total_vendor}}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -38,7 +38,7 @@
                                     </div>
                                     <div class="flex-1 text-right md:text-center">
                                         <h5 class="font-bold uppercase text-gray-600">Total Katalog</h5>
-                                        <h3 class="font-bold text-3xl">10</h3>
+                                        <h3 class="font-bold text-3xl">{{all_data.total_katalog}}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -55,7 +55,7 @@
                                     </div>
                                     <div class="flex-1 text-right md:text-center">
                                         <h5 class="font-bold uppercase text-gray-600">Total Pesanan</h5>
-                                        <h3 class="font-bold text-3xl">10</h3>
+                                        <h3 class="font-bold text-3xl">{{all_data.total_booking}}</h3>
                                     </div>
                                 </div>
                             </div>
@@ -95,6 +95,7 @@
             Welcome,
             apexchart: VueApexCharts,
         },
+        props: ['all_data'],
         data: function() {
             return {
                 chartOptionsOrder: {
@@ -105,8 +106,17 @@
                         id: "chart-jumlah-order",
                     },
                     xaxis: {
-                        categories: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agust", "Sep", "Okt", "Nov"],
+                        categories: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
                     },
+                    yaxis: [{
+                        min: 0,
+                        max: 50,
+                        labels: {
+                            formatter: function (val) {
+                                return val;
+                            }
+                        }
+                    }]
                 },
                 chartOptionsBayar: {
                     title : {
@@ -116,19 +126,19 @@
                         id: "chart-jumlah-bayar",
                     },
                     xaxis: {
-                        categories: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agust", "Sep", "Okt", "Nov"],
+                        categories: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
                     },
                 },
                 seriesOrder: [
                     {
                         name: "Jumlah Pemesanan",
-                        data: [30, 40, 35, 50, 49, 60, 70, 91, 49, 60, 70, 91],
+                        data: this.all_data.order_perbulan,
                     },
                 ],
                 seriesBayar: [
                     {
-                        name: "Jumlah Pendapatan (Juta)",
-                        data: [30, 40, 35, 50, 49, 60, 70, 91, 49, 60, 70, 91],
+                        name: "Jumlah Pendapatan",
+                        data: this.all_data.total_omset,
                     },
                 ],
             };

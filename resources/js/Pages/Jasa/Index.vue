@@ -22,6 +22,7 @@
                                 Tambah Data
                             </inertia-link>
                         </div>
+
                         <!--                        <div>-->
                         <!--                            <button @click="clearSearch" v-if="isSearching"-->
                         <!--                                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded my-3">-->
@@ -29,12 +30,12 @@
                         <!--                            </button>-->
                         <!--                        </div>-->
                         <div>
-                            <div class="pt-2 relative mx-auto text-gray-600">
-
-                                <form>
+                            <div class="my-3 pt-2 relative mx-auto text-gray-600">
+                                <form @submit.prevent="searchData">
                                     <input
                                         class="border-2 border-gray-300 bg-white h-10 px-5 pr-16 rounded-lg text-sm focus:outline-none"
-                                        type="search" name="cari" placeholder="Search">
+                                        type="search" name="cari" placeholder="Search" v-model="query">
+
                                     <button type="submit" class="absolute right-0 top-0 mt-5 mr-4">
                                         <svg class="text-gray-600 h-4 w-4 fill-current"
                                              xmlns="http://www.w3.org/2000/svg"
@@ -48,6 +49,10 @@
                                       </svg>
                                     </button>
                                 </form>
+                                    <a @click="clearSearch" v-if="isSearching"
+                                            class="my-2 text-red" style="cursor : pointer">
+                                        Clear Search
+                                    </a>
 
                             </div>
                         </div>
@@ -106,8 +111,24 @@ export default defineComponent({
         Pagination
         // Welcome,
     },
+    created(){
+        this.isSearching = !!new URLSearchParams(window.location.search).get('cari');
+    },
+    data(){
+        return {
+            query: '',
+            isSearching: false,
+        }
+    },
     props: ['alljasa'],
     methods:{
+        searchData: function () {
+            this.$inertia.get(`/jasa?cari=${this.query}`)
+        },
+        clearSearch: function () {
+            this.query = '';
+            this.$inertia.get(`/jasa`)
+        },
         deleteRow: function (data) {
             if (!confirm('Are you sure want to remove?')) return;
             data._method = 'DELETE';

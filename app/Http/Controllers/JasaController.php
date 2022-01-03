@@ -20,9 +20,16 @@ class JasaController extends Controller
 //     */
     public function index()
     {
-        $alljasa = Product::latest()
-            ->with('user')
-            ->paginate(7);
+        if (request()->query('cari')) {
+            $alljasa = Product::where('nama', 'like', '%' . request()->query('cari') . '%')
+                ->latest()
+                ->with('user')
+                ->paginate(7);
+        } else {
+            $alljasa = Product::latest()
+                ->with('user')
+                ->paginate(7);
+        }
         return Inertia::render('Jasa/Index', ['alljasa' => $alljasa]);
     }
 
@@ -61,6 +68,7 @@ class JasaController extends Controller
                 $file_ext = $file_cover->getClientOriginalExtension();
                 $file_name = 'vendor_cover_'.time().'.'.$file_ext;
                 $file_cover->move(public_path().'/images/uploads/', $file_name);
+
                 $product = Product::create([
                     'nama' => $request->nama,
                     'harga' => convert_to_nominal($request->harga),
@@ -68,17 +76,19 @@ class JasaController extends Controller
                     'cover' => $file_name,
                     'nominal_dp' => convert_to_nominal($request->nominal_dp),
                     'category_id' => $request->category_id,
-                    'created_by' => Auth::id()
+                    'created_by' => Auth::id(),
                 ]);
+                $i=1;
                 foreach($request->file('image_posts') as $file)
                 {
                     $ext = $file->getClientOriginalExtension();
-                    $name = 'media_vendor_'.time().'.'.$ext;
+                    $name = 'media_vendor_'.$i.'_'.$product->id.'_'.time().'.'.$ext;
                     MediaProduct::create([
                        'filename' => $name,
                         'ext' => $ext,
                         'product_id' => $product->id
                     ]);
+                    $i++;
                     $file->move(public_path().'/images/uploads/vendor/', $name);
                 }
                 return redirect()->route('jasa.index')

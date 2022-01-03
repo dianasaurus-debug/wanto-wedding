@@ -22,6 +22,9 @@ class CreatePaymentsTable extends Migration
             $table->bigInteger('bank_account_id')->unsigned();
             $table->foreign('bank_account_id')->references('id')->on('bank_accounts')->onDelete('cascade');
             $table->dateTime('confirmed_at')->nullable();
+            $table->string('kode_unik')->unique()->nullable();
+            $table->bigInteger('booking_id')->unsigned();
+            $table->foreign('booking_id')->references('id')->on('bookings')->onDelete('cascade');
             $table->timestamps();
         });
     }
