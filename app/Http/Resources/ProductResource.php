@@ -25,6 +25,8 @@ class ProductResource extends JsonResource
             'category_name' => $this->category->nama_kategori,
             'category' => $this->category,
             'reviews' => $this->reviews,
+            'booking' => $this->booking,
+            'is_ordered' => count($this->booking) > 0 ? 1 : 0,
             'rating_mean' => $this->rating_mean
         ];
     }

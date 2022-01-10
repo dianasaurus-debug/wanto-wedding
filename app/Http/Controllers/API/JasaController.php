@@ -18,24 +18,39 @@ class JasaController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request) //Nampilin semua data tanpa terkecuali di tabel product
+    public function index(Request $request)
     {
         try {
+            $new_jasa = array();
             $all_jasa = Product::with('category')
                 ->with('reviews')
+                ->with(["booking" => function($q){
+                    $q->whereNotIn('status', [7,8])
+                    ->where('customer_id', auth()->id());
+                }])
                 ->get()
                 ->groupBy('category_id'); //Proses mendapatkan data dari tabel product
+            foreach ($all_jasa as $key=>$value){
+                foreach ($value as $jasa){
+                    if(count($jasa->booking)>0){
+                        $jasa->is_ordered = 1;
+                    } else {
+                        $jasa->is_ordered = 0;
+                    }
+                    $new_jasa[$key][]=$jasa;
+                }
+            }
             $data = array(
                 'status' => 'success',
                 'message' => 'Berhasil menampilkan data vendor',
-                'data' => $all_jasa,
+                'data' => $new_jasa,
             );
             return response()->json($data);
         } catch (\Exception $exception) {
             $data = array(
                 [
                     'status' => 'error',
-                    'message' => 'Terjadi kesalahan : '.$exception->getMessage()
+                    'message' => 'Terjadi kesalahan : ' . $exception->getMessage()
                 ]
             );
             return response()->json($data);
@@ -55,7 +70,7 @@ class JasaController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -66,20 +81,26 @@ class JasaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function show($id) // $id = 2
     {
         try {
+
             $jasa = Product::where('id', $id)
                 ->with('reviews')
+                ->with(["booking" => function($q){
+                    $q->whereNotIn('status', [7,8])
+                        ->where('customer_id', auth()->id());
+                }])
                 ->with('media') //dengan galerinya juga..
                 ->first();
-            $jasa->update(['jumlah_dilihat'=>$jasa->jumlah_dilihat+1]);
+            $jasa->update(['jumlah_dilihat' => $jasa->jumlah_dilihat + 1]);
             $product_resource = '';
             if ($jasa)
                 $product_resource = new ProductResource($jasa);
+
             $data = array(
                 'status' => 'success',
                 'message' => 'Berhasil menampilkan data vendor',
@@ -90,7 +111,7 @@ class JasaController extends Controller
             $data = array(
                 [
                     'status' => 'error',
-                    'message' => 'Terjadi kesalahan : '.$exception->getMessage()
+                    'message' => 'Terjadi kesalahan : ' . $exception->getMessage()
                 ]
             );
             return response()->json($data);
@@ -100,7 +121,7 @@ class JasaController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -111,8 +132,8 @@ class JasaController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -123,7 +144,7 @@ class JasaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -132,28 +153,32 @@ class JasaController extends Controller
     }
 
 
-    public function getThumbnails(Request $request){
+    public function getThumbnails(Request $request)
+    {
         try {
             $best_seller = Product::withCount('booking')
-                            ->orderByDesc('booking_count')
-                            ->with('reviews')
-                            ->with('category')
-                            ->first();
-            $cheapest_harga = Product::where('harga','>=',0)->min('harga');
+                ->orderByDesc('booking_count')
+                ->with('reviews')
+                ->with('category')
+                ->first();
+            $cheapest_harga = Product::where('harga', '>=', 0)->min('harga');
             $cheapest = Product::where('harga', $cheapest_harga)
-                        ->with('reviews')
-                        ->with('category')
-                        ->first();
+                ->with('reviews')
+                ->with('category')
+                ->first();
             $newest = Product::latest()
-                        ->with('category')
-                        ->with('reviews')
-                        ->first();
+                ->with('category')
+                ->with('reviews')
+                ->first();
 
-            $best_seller->kind = 'Best Seller';
-            $cheapest->kind = 'Harga Terjangkau';
-            $newest->kind = 'Terbaru';
-
-            $thumbnails = Array($best_seller, $cheapest, $newest);
+            if ($best_seller && $cheapest && $newest) {
+                $best_seller->kind = 'Best Seller';
+                $cheapest->kind = 'Harga Terjangkau';
+                $newest->kind = 'Terbaru';
+                $thumbnails = array($best_seller, $cheapest, $newest);
+            } else {
+                $thumbnails = [];
+            }
 
             $data = array(
                 'status' => 'success',
@@ -161,7 +186,7 @@ class JasaController extends Controller
                 'data' => $thumbnails,
             );
             return response()->json($data);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $data = array(
                 'status' => 'false',
                 'message' => $exception->getMessage(),
@@ -170,19 +195,32 @@ class JasaController extends Controller
         }
     }
 
-    public function getPaketLengkap(Request $request){
+    public function getPaketLengkap(Request $request)
+    {
         try {
+            $new_jasa = array();
             $paket_lengkap = Product::where('category_id', 1)
-                                ->with('reviews')
-                                ->with('category')->get();
-
+                ->with('reviews')
+                ->with(["booking" => function($q){
+                    $q->whereNotIn('status', [7,8])
+                        ->where('customer_id', auth()->id());
+                }])
+                ->with('category')->get();
+            foreach ($paket_lengkap as $jasa){
+                if(count($jasa->booking)>0){
+                    $jasa->is_ordered = 1;
+                } else {
+                    $jasa->is_ordered = 0;
+                }
+                $new_jasa[]=$jasa;
+            }
             $data = array(
                 'status' => 'success',
                 'message' => 'Berhasil menampilkan data paket lengkap',
-                'data' => $paket_lengkap,
+                'data' => $new_jasa,
             );
             return response()->json($data);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $data = array(
                 'status' => 'false',
                 'message' => $exception->getMessage(),
@@ -191,7 +229,8 @@ class JasaController extends Controller
         }
     }
 
-    public function add_review(Request $request){
+    public function add_review(Request $request)
+    {
         try {
             $booking = Booking::where('id', $request->booking_id)->first();
             $product = Product::where('id', $request->product_id)->first();
@@ -203,7 +242,7 @@ class JasaController extends Controller
                 'booking_id' => $request->booking_id
             ]);
             $mean_review = Review::where('product_id', $request->product_id)->avg('score');
-            $booking->update(['status'=>8]);
+            $booking->update(['status' => 8]);
             $product->update(['rating_mean' => $mean_review]);
             $data = array(
                 'status' => 'success',
@@ -211,7 +250,7 @@ class JasaController extends Controller
                 'data' => $review,
             );
             return response()->json($data);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $data = array(
                 'status' => 'false',
                 'message' => $exception->getMessage(),
@@ -219,7 +258,9 @@ class JasaController extends Controller
             return response()->json($data);
         }
     }
-    public function getPencarianPopuler(Request $request){
+
+    public function getPencarianPopuler(Request $request)
+    {
         try {
             $populer = Product::orderBy('jumlah_dilihat', 'desc')->take(3)->get();
             $data = array(
@@ -228,7 +269,7 @@ class JasaController extends Controller
                 'data' => $populer,
             );
             return response()->json($data);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $data = array(
                 'status' => 'false',
                 'message' => $exception->getMessage(),
@@ -236,16 +277,18 @@ class JasaController extends Controller
             return response()->json($data);
         }
     }
-    public function getPencarianTerpopuler(Request $request){
+
+    public function getPencarianTerpopuler(Request $request)
+    {
         try {
             $data_total = [];
             $populer = Product::with('reviews')->get();
-            foreach ($populer as $p){
+            foreach ($populer as $p) {
                 $p->total_review = $p->rating_mean + count($p->reviews);
                 array_push($data_total, $p);
             }
             // Desc sort
-            usort($data_total,function($first,$second){
+            usort($data_total, function ($first, $second) {
                 return $first->total_review < $second->total_review;
             });
 
@@ -255,7 +298,7 @@ class JasaController extends Controller
                 'data' => $data_total,
             );
             return response()->json($data);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $data = array(
                 'status' => 'false',
                 'message' => $exception->getMessage(),
@@ -263,56 +306,94 @@ class JasaController extends Controller
             return response()->json($data);
         }
     }
-    public function getRecommendations(Request $request){
+
+    public function getRecommendations(Request $request)
+    {
         try {
             $data_users = array();
-            $users = User::where('is_admin', 0)->with('reviews')->get();
-            foreach ($users as $u){
+            $users = User::where('is_admin', 0)->with('reviews.product')->get();
+            $auth_user = User::where('id', auth()->id())->with('reviews.product')->first();
+            $all_products = Product::get();
+            $array_of_users_rating = array();
+            foreach ($users as $u) {
                 $array_ratings = array();
-                if(count($u->reviews)>0)
-                    foreach ($u->reviews as $review){
+                if (count($u->reviews) > 0)
+                    foreach ($u->reviews as $review) {
                         $array_ratings[$review->product_id] = $review->score;
                     }
                 $data_users[$u->id] = $array_ratings;
             }
-            $books =  array(
-
-                "phil" => array("my girl" => 2.5, "the god delusion" => 3.5,
-                    "tweak" => 3, "the shack" => 4,
-                    "the birds in my life" => 2.5,
-                    "new moon" => 3.5),
-
-                "sameer" => array("the last lecture" => 2.5, "the god delusion" => 3.5,
-                    "the noble wilds" => 3, "the shack" => 3.5,
-                    "the birds in my life" => 2.5, "new moon" => 1),
-
-                "john" => array("a thousand splendid suns" => 5, "the secret" => 3.5,
-                    "tweak" => 1),
-
-                "peter" => array("chaos" => 5, "php in action" => 3.5),
-
-                "jill" => array("the last lecture" => 1.5, "the secret" => 2.5,
-                    "the noble wilds" => 4, "the host: a novel" => 3.5,
-                    "the world without end" => 2.5, "new moon" => 3.5),
-
-                "bruce" => array("the last lecture" => 3, "the hollow" => 1.5,
-                    "the noble wilds" => 3, "the shack" => 3.5,
-                    "the appeal" => 2, "new moon" => 3),
-
-                "tom" => array("chaos" => 2.5)
-
-
+            $books = array(
+                "user1" => array("redmi note7" => 5, "vivo y91" => 4, "iphone 11" => 3),
+                "user2" => array("vivo y91" => 3, "iphone 11" => 2, "samsung a20" => 4, "redmi note5" => 1),
+                "user3" => array("redmi note7" => 3, "redmi note5" => 3),
+                "user4" => array("samsung a10" => 4, "iphone 11" => 1),
+                "user5" => array("redmi note7" => 2, "vivo y91" => 2, "iphone 11" => 4, "redmi note5" => 5),
+                "user6" => array("samsung a10" => 2, "redmi note7" => 5, "iphone 11" => 4)
             );
+            $qualified_users = array();
+            foreach ($users as $user) {
+                $array_of_products = array();
+                if (count($user->reviews) > 0) {
+                    array_push($qualified_users, $user);
+                    foreach ($user->reviews as $review) {
+                        $array_of_products[$review->product->id] = $review->score;
+                    }
+                    $array_of_users_rating[$user->id] = $array_of_products;
+                } else {
+                    foreach ($all_products as $product) {
+                        $array_of_products[$product->id] = $product->rating_mean;
+                    }
+                    $array_of_users_rating[$user->id] = $array_of_products;
+                }
+            }
+            $id_of_products = array();
+            if (count($auth_user->reviews) > 0) {
+                $array_of_recommendations = get_recommendations($array_of_users_rating, $auth_user->id);
+                arsort($array_of_recommendations);
+                $i = 0;
+                if (count($array_of_recommendations) > 3) {
+                    foreach ($array_of_recommendations as $key => $value) {
+                        if ($i <= 2) {
+                            array_push($id_of_products, strval($key));
+                        }
+                        $i++;
+                    }
+                } else {
+                    foreach ($array_of_recommendations as $key => $value) {
+                        array_push($id_of_products, strval($key[1]));
+                        $i = 0;
+                    }
+                }
+            } else {
+                $array_of_recommendations = $array_of_users_rating[$auth_user->id];
+                arsort($array_of_recommendations);
+                $i = 0;
+                if (count($array_of_recommendations) > 3) {
+                    foreach ($array_of_recommendations as $key => $value) {
+                        if ($i <= 2) {
+                            array_push($id_of_products, strval($key));
+                        }
+                        $i++;
+                    }
+                } else {
+                    foreach ($array_of_recommendations as $key => $value) {
+                        array_push($id_of_products, strval($key));
+                        $i++;
+                    }
 
-            // Desc sort
+                }
 
+            }
+            $placeholders = implode(',', array_fill(0, count($id_of_products), '?'));
+            $products = Product::whereIn('id', $id_of_products)->orderByRaw("field(id,{$placeholders})", $id_of_products)->with('category')->get();
             $data = array(
                 'status' => 'success',
                 'message' => 'Berhasil menampilkan data rekomendasi',
-                'data' => get_recommendations($books, "phil"),
+                'data' => $products
             );
             return response()->json($data);
-        } catch (\Exception $exception){
+        } catch (\Exception $exception) {
             $data = array(
                 'status' => 'false',
                 'message' => $exception->getMessage(),
@@ -320,6 +401,33 @@ class JasaController extends Controller
             return response()->json($data);
         }
     }
+
+    public function cari_vendor(Request $request)
+    {
+        try {
+            $jasa = Product::where('nama', 'like', '%' . request()->query('cari') . '%')
+                ->orWhere('deskripsi', 'like', '%' . request()->query('cari') . '%')
+                ->with('category')
+                ->with('reviews')
+                ->get();
+            $data = array(
+                'status' => 'success',
+                'message' => 'Berhasil menampilkan data vendor',
+                'data' => $jasa,
+            );
+            return response()->json($data);
+        } catch (\Exception $exception) {
+            $data = array(
+                [
+                    'status' => 'error',
+                    'message' => 'Terjadi kesalahan : ' . $exception->getMessage()
+                ]
+            );
+            return response()->json($data);
+        }
+    }
+
+
 
 
 }

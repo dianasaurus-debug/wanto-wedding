@@ -12,7 +12,7 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use \App\Http\Controllers\KategoriPaketController;
-use \App\Http\Controllers\KategoriAdatController;
+use \App\Http\Controllers\TemaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,7 +45,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('post', PostController::class);
     Route::resource('booking', BookingController::class);
     Route::resource('kategori-paket', KategoriPaketController::class);
-    Route::resource('kategori-adat', KategoriAdatController::class);
+    Route::resource('kategori-tema', TemaController::class);
     Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::put('/{id}', [PaymentController::class, 'verifikasi'])->name('verifikasi');

@@ -9,6 +9,7 @@ use App\Http\Controllers\API\BookingController as APIBookingController;
 use App\Http\Controllers\API\JadwalController as APIJadwalController;
 use App\Http\Controllers\API\PostController as APIPostController;
 use App\Http\Controllers\API\PaymentController as APIPaymentController;
+use App\Http\Controllers\API\KategoriController as APIKategoriController;
 
 
 /*
@@ -35,6 +36,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/review/add', [APIJasaController::class, 'add_review'])->name('review.add');
     Route::get('/profile', [APIAuthController::class, 'profile']);
     Route::put('/update/profile', [APIAuthController::class, 'update']);
+    Route::put('/change/password', [APIAuthController::class, 'change_password']);
 
     Route::post('/logout', [APIAuthController::class, 'logout']);
     Route::group(['prefix'=>'booking','as'=>'booking.'], function(){
@@ -47,11 +49,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::group(['prefix'=>'jadwal','as'=>'jadwal.'], function(){
         Route::get('/list', [APIJadwalController::class, 'daftar_jadwal'])->name('list');
     });
+    Route::get('pencarian/rekomendasi', [APIJasaController::class, 'getRecommendations']);
+    Route::get('thumbnails/paket-lengkap', [APIJasaController::class, 'getPaketLengkap']);
+    Route::get('thumbnails/paket-lengkap', [APIJasaController::class, 'getPaketLengkap']);
+    Route::resource('vendor', APIJasaController::class);
+
 });
-Route::resource('vendor', APIJasaController::class);
+Route::get('pencarian/vendor', [APIJasaController::class, 'cari_vendor']);
 Route::resource('bank', APIBankAccountController::class);
 Route::resource('katalog', APIPostController::class);
 Route::get('thumbnails/vendor', [APIJasaController::class, 'getThumbnails']);
-Route::get('thumbnails/paket-lengkap', [APIJasaController::class, 'getPaketLengkap']);
 Route::get('pencarian/terpopuler', [APIJasaController::class, 'getPencarianTerpopuler']);
-Route::get('pencarian/rekomendasi', [APIJasaController::class, 'getRecommendations']);
+Route::get('categories/tema', [APIKategoriController::class, 'indexTema']);
+Route::get('categories/paket', [APIKategoriController::class, 'indexKategori']);
+

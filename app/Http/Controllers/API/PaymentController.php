@@ -34,7 +34,7 @@ class PaymentController extends Controller
             return response()->json($data, 400);
         } else {
             try {
-                $payment = Payment::where('id', $id)->get();
+                $payment = Payment::where('id', $id)->first();
                 if($request->has('bukti_pembayaran')){
                     $path_image = public_path('images/bukti_pembayaran/'.$payment->bukti_pembayaran);
                     if(File::exists($path_image)) {

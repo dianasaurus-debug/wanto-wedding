@@ -35,6 +35,7 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'alamat' => $request->alamat,
                 'profile_photo_path' => 'user.png',
+                'fcm_token' => $request->fcm_token,
                 'password' => Hash::make($request->password)
             ]);
 
@@ -117,9 +118,12 @@ class AuthController extends Controller
                 ->json(['success' => false,'message' => 'Unauthorized'], 401);
         }
         try {
+
             $user = User::where('email', $request['email'])
                 ->where('is_admin', 0)
-                ->firstOrFail();
+                ->first();
+
+            $user->update(['fcm_token'=>$request->fcm_token]);
 
             $token = $user->createToken('auth_token')->plainTextToken;
             return response()
@@ -174,6 +178,42 @@ class AuthController extends Controller
                     'message' => 'Berhasil menampilkan profil!',
                     'data' => $user
                 ]);
+        } catch (\Exception $e){
+            return response()
+                ->json([
+                    'success' => false,
+                    'message' => 'Gagal menampilkan profil! Error : '.$e->getMessage(),
+                ]);
+        }
+    }
+
+    public function change_password(Request $request){
+        if(!auth()){
+            return response()
+                ->json([
+                    'success' => false,
+                    'message' => 'Unauthorized',
+                ]);
+        }
+        try {
+            $user = auth()->user();
+            if(Hash::check($request->password, $user->password)){
+                $found_user = User::where('id', $user->id)->first();
+                $found_user->update(['password'=>$request->new_password]);
+                return response()
+                    ->json([
+                        'success' => true,
+                        'message' => 'Berhasil merubah password!',
+                        'data' => $user
+                    ]);
+            } else {
+                return response()
+                    ->json([
+                        'success' => false,
+                        'message' => 'Password yang dimasukkan tidak tepat',
+                    ]);
+            }
+
         } catch (\Exception $e){
             return response()
                 ->json([

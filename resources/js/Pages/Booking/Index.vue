@@ -49,7 +49,7 @@
                             </thead>
                             <tbody>
                             <tr v-for="(row, i) in allbookings.data">
-                                <td class="border px-4 py-2">{{ i+1 }}</td>
+                                <td class="border px-4 py-2">{{ row.id }}</td>
                                 <td class="border px-4 py-2">{{ row.product.nama }}</td>
                                 <td class="border px-4 py-2">{{ row.user.nama_depan+" "+row.user.nama_belakang }}</td>
                                 <td class="border px-4 py-2">{{ row.start_booking }}</td>

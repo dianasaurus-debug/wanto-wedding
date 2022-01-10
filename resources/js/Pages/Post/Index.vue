@@ -57,8 +57,7 @@
                             <div v-for="row in allpost.data" class="rounded overflow-hidden shadow-lg">
                                 <img class="w-full" :src="'images/uploads/katalog/'+row.cover" :alt="row.judul">
                                 <div class="p-4">
-                                    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{{row.category.nama_kategori}}</span>
-                                    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{{row.adatcategory_id!=null ? row.adatcategory.nama_kategori : 'Semua Adat'}}</span>
+                                    <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{{row.tema_id!=null ? row.tema.nama_tema : 'Semua tema'}}</span>
                                     <div class="font-bold text-xl mb-2">{{ row.judul }}</div>
                                     <p class="text-gray-700 text-base">
                                         {{ row.isi }}
@@ -116,24 +115,13 @@
                                 </div>
                                 <div class="mb-4">
                                     <label for="exampleFormControlInput2"
-                                           class="block text-gray-700 text-sm font-bold mb-2">Kategori katalog:</label>
-                                    <select v-model="form.category_id"
-                                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                            type="text">
-                                        <option v-for="kategori in allkategori" v-bind:value="kategori.id">
-                                            {{ kategori.nama_kategori }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label for="exampleFormControlInput2"
                                            class="block text-gray-700 text-sm font-bold mb-2">Kategori Adat (Pilih semua adat jika tidak memakai adat tertentu):</label>
-                                    <select v-model="form.adatcategory_id"
+                                    <select v-model="form.tema_id"
                                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                             type="text">
-                                        <option v-bind:value=null>Semua Adat</option>
-                                        <option v-for="kategori in alladat" v-bind:value="kategori.id">
-                                            {{ kategori.nama_kategori }}
+                                        <option v-bind:value=null>Pilih tema katalog</option>
+                                        <option v-for="kategori in alltema" v-bind:value="kategori.id">
+                                            {{ kategori.nama_tema }}
                                         </option>
                                     </select>
                                 </div>
@@ -195,7 +183,7 @@ export default defineComponent({
         Pagination
         // Welcome,
     },
-    props: ['allpost', 'allkategori', 'alladat'],
+    props: ['allpost', 'allkategori', 'alltema'],
     created(){
         this.isSearching = !!new URLSearchParams(window.location.search).get('cari');
     },
@@ -207,8 +195,7 @@ export default defineComponent({
                 judul: null,
                 cover: null,
                 isi: null,
-                category_id: null,
-                adatcategory_id: null
+                tema_id: null
             },
             previewImage: null,
             query: '',
@@ -236,8 +223,7 @@ export default defineComponent({
                     judul: null,
                     cover: null,
                     isi: null,
-                    category_id: null,
-                    adatcategory_id: null
+                    tema_id: null
             };
             this.previewImage = null;
         },

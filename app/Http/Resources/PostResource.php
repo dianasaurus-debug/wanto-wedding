@@ -18,7 +18,7 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'judul'=>$this->judul,
             'cover'=> $this->cover,
-            'category_id' => $this->category_id,
+            'tema_id' => $this->tema_id,
             'isi' => $this->isi,
             'created_at' => $this->created_at
         ];

@@ -10,13 +10,9 @@ class Post extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function category()
+    public function tema()
     {
-        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
-    }
-    public function adatcategory()
-    {
-        return $this->belongsTo(KategoriAdat::class, 'adatcategory_id', 'id');
+        return $this->belongsTo(TemaKatalog::class, 'tema_id', 'id');
     }
     public function media()
     {

@@ -61,10 +61,10 @@
                         Kategori Paket
                     </Link>
                 </SideBarLink>
-                <SideBarLink :active="route().current('kategori-adat.index')">
+                <SideBarLink :active="route().current('kategori-tema.index')">
                     <i class="fas fa-money-check h-6 w-6 fill-current mr-2"></i>
-                    <Link :href="route('kategori-adat.index')" class="text-gray-700">
-                        Kategori Adat
+                    <Link :href="route('kategori-tema.index')" class="text-gray-700">
+                        Kategori Tema
                     </Link>
                 </SideBarLink>
             </div>

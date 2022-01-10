@@ -38,6 +38,7 @@ class PaymentController extends Controller
                     $jadwal = Schedule::where('booking_id', $payment->booking_id)->first();
                     $jadwal->update(['status' => 1]);//diupdate ke sudah masuk jadwal
                     $nominal_pelunasan = generate_unique_price($booking->product->harga-$booking->product->nominal_dp);
+
                     $payment_pelunasan = Payment::create([
                         'nominal' => $nominal_pelunasan["hasil"],
                         'kode_unik' => $nominal_pelunasan["kode_unik"],

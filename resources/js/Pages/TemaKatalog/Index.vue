@@ -2,7 +2,7 @@
     <app-layout title="Akun Bank">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Kategori Adat
+                Tema Katalog
             </h2>
         </template>
 
@@ -45,19 +45,19 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="alladat.data.length>0">
+                    <div v-if="alltema.data.length>0">
                         <table class="table-fixed w-full">
                             <thead>
                             <tr class="bg-gray-100">
                                 <th class="px-4 py-2 w-20">No.</th>
-                                <th class="px-4 py-2">Nama Kategori</th>
+                                <th class="px-4 py-2">Nama Tema</th>
                                 <th class="px-4 py-2">Aksi</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(row, i) in alladat.data">
+                            <tr v-for="(row, i) in alltema.data">
                                 <td class="border px-4 py-2">{{ i+1 }}</td>
-                                <td class="border px-4 py-2">{{ row.nama_kategori }}</td>
+                                <td class="border px-4 py-2">{{ row.nama_tema }}</td>
                                 <td class="border px-4 py-2">
                                     <button @click="edit(row)"
                                             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
@@ -71,7 +71,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <pagination class="mt-6" :links="alladat.links"/>
+                        <pagination class="mt-6" :links="alltema.links"/>
                     </div>
                     <div v-else>
                         <h5 class="text-gray-400 font-medium font-bold text-center"> Belum ada data</h5>
@@ -94,7 +94,7 @@
                             <div class="">
                                 <div class="mb-4">
                                     <label for="exampleFormControlInput1" class="block text-gray-700 text-sm font-bold mb-2">Nama Kategori:</label>
-                                    <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleFormControlInput1" placeholder="Masukkan nama kategori adat" v-model="form.nama_kategori">
+                                    <input type="text" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="exampleFormControlInput1" placeholder="Masukkan nama kategori adat" v-model="form.nama_tema">
                                 </div>
                             </div>
                         </div>
@@ -135,7 +135,7 @@ export default defineComponent({
         Pagination
         // Welcome,
     },
-    props: ['alladat'],
+    props: ['alltema'],
     created(){
         this.isSearching = !!new URLSearchParams(window.location.search).get('cari');
     },
@@ -144,7 +144,7 @@ export default defineComponent({
             editMode: false,
             isOpen: false,
             form: {
-                nama_kategori: null,
+                nama_tema: null,
             },
             query: '',
             isSearching: false,
@@ -152,7 +152,7 @@ export default defineComponent({
     },
     methods: {
         searchData: function () {
-            this.$inertia.get(`/kategori-adat?cari=${this.query}`)
+            this.$inertia.get(`/kategori-tema?cari=${this.query}`)
         },
         openModal: function () {
             this.isOpen = true;
@@ -164,11 +164,11 @@ export default defineComponent({
         },
         reset: function () {
             this.form = {
-                nama_kategori: null,
+                nama_tema: null,
             }
         },
         save: function (data) {
-            this.$inertia.post('/kategori-adat', data)
+            this.$inertia.post('/kategori-tema', data)
             this.reset();
             this.closeModal();
             this.editMode = false;
@@ -180,20 +180,20 @@ export default defineComponent({
         },
         update: function (data) {
             data._method = 'PUT';
-            this.$inertia.post('kategori-adat/' + data.id, data)
+            this.$inertia.post('kategori-tema/' + data.id, data)
             this.reset();
             this.closeModal();
         },
         deleteRow: function (data) {
             if (!confirm('Are you sure want to remove?')) return;
             data._method = 'DELETE';
-            this.$inertia.post('kategori-adat/' + data.id, data)
+            this.$inertia.post('kategori-tema/' + data.id, data)
             this.reset();
             this.closeModal();
         },
         clearSearch: function () {
             this.query = '';
-            this.$inertia.get(`kategori-adat`)
+            this.$inertia.get(`kategori-tema`)
         },
     }
 })

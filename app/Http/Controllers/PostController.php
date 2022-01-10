@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KategoriAdat;
 use App\Models\Post;
 use App\Models\ProductCategory;
+use App\Models\TemaKatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -24,21 +25,19 @@ class PostController extends Controller
                 ->orWhere('isi', 'like', '%' . request()->query('cari') . '%')
                 ->latest()
                 ->with('user')
-                ->with('category')
-                ->with('adatcategory')
+                ->with('tema')
+
                 ->paginate(7);
         } else {
             $allpost = Post::where('judul', 'like', '%' . request()->query('cari') . '%')
                 ->orWhere('isi', 'like', '%' . request()->query('cari') . '%')
                 ->latest()
                 ->with('user')
-                ->with('category')
-                ->with('adatcategory')
+                ->with('tema')
                 ->paginate(7);
         }
-        $allkategori = ProductCategory::get();
-        $alladat = KategoriAdat::get();
-        return Inertia::render('Post/Index', ['allpost' => $allpost, 'allkategori' => $allkategori, 'alladat' => $alladat]);
+        $alltema = TemaKatalog::get();
+        return Inertia::render('Post/Index', ['allpost' => $allpost,'alltema' => $alltema]);
     }
 
     /**
@@ -63,7 +62,7 @@ class PostController extends Controller
             'cover' => 'required|mimes:jpeg,jpg,png,gif,csv,txt,pdf|max:2048',
             'judul' => 'required|string',
             'isi' => 'required',
-            'category_id' => 'required'
+            'tema_id' => 'required'
         ]);
         try{
             if($request->hasfile('cover')) {
@@ -75,8 +74,7 @@ class PostController extends Controller
                     'judul' => $request->judul,
                     'isi' => $request->isi,
                     'cover' => $file_name,
-                    'category_id' => $request->category_id,
-                    'adatcategory_id' => $request->adatcategory_id,
+                    'tema_id' => $request->tema_id,
                     'created_by' => Auth::id()
                 ]);
                 return redirect()->route('post.index')
@@ -125,7 +123,7 @@ class PostController extends Controller
         $request->validate([
             'judul' => 'required|string',
             'isi' => 'required',
-            'category_id' => 'required'
+            'tema_id' => 'required'
         ]);
         try{
             $post = Post::findOrFail($id);
@@ -142,14 +140,13 @@ class PostController extends Controller
                     'judul' => $request->judul,
                     'isi' => $request->isi,
                     'cover' => $file_name,
-                    'category_id' => $request->category_id,
-                    'adatcategory_id' => $request->adatcategory_id
+                    'tema_id' => $request->tema_id
                 ]);
             } else {
                 $post->update([
                     'judul' => $request->judul,
                     'isi' => $request->isi,
-                    'adatcategory_id' => $request->adatcategory_id,
+                    'tema_id' => $request->tema_id,
                 ]);
             }
             return redirect()->route('post.index')

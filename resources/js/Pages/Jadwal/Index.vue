@@ -97,9 +97,13 @@ export default defineComponent({
     created() {
         this.jadwal.jadwal_terpakai.forEach(data => {
             this.data_jadwal.push({
-                title: `Vendor : ${data.booking.product.nama}, Customer : ${data.booking.user.nama_depan} ${data.booking.user.nama_belakang}`,
+                title: `${data.booking.product.nama}`,
                 start: data.start_booking,
                 end: data.end_booking,
+                extendedProps: {
+                    jenis : data.status,
+                    customer:`${data.booking.user.nama_depan} ${data.booking.user.nama_belakang}`,
+                },
             })
             this.data_jadwal.push({
                 title: `Jam mulai`,
@@ -110,6 +114,26 @@ export default defineComponent({
                 start: data.end_booking,
             })
         })
+        this.jadwal.jadwal_off.forEach(data => {
+            this.data_jadwal.push({
+                title: `Jadwal libur`,
+                start: data.start_booking,
+                end: data.end_booking,
+                extendedProps: {
+                    jenis : data.status,
+                },
+                color: 'grey'
+            })
+            this.data_jadwal.push({
+                title: `Jam mulai`,
+                start: data.start_booking,
+            })
+            this.data_jadwal.push({
+                title: `Jam berakhir`,
+                start: data.end_booking,
+            })
+        })
+
         this.calendarOptions.events = this.data_jadwal;
     },
     data() {
@@ -132,6 +156,7 @@ export default defineComponent({
                     backgroundColor: 'red',
                     textColor: 'green',
                 },
+                eventClick: this.handleEventClick,
                 eventTimeFormat: {
                     hour: '2-digit',
                     minute: '2-digit',
@@ -149,7 +174,29 @@ export default defineComponent({
             this.isOpen = false;
         },
         handleDateClick: function (arg) {
-            alert('date click! ')
+            console.log(arg);
+        },
+        handleEventClick: function (info) {
+            if(info.event.extendedProps.jenis==0){
+                this.$swal.fire({
+                    title: 'Jadwal libur (off)',
+                    html : `<ul>
+                            <li><b>Tanggal mulai</b> : ${moment(info.event.start).format('YYYY-MM-DD HH:mm')} </li>
+                            <li><b>Tanggal Berakhir</b> : ${moment(info.event.end).format('YYYY-MM-DD HH:mm')}</li>
+                        </ul>`,
+                })
+            } else {
+                this.$swal.fire({
+                    title: 'Detail event',
+                    html : `<ul>
+                            <li><b>Nama Vendor</b> : ${info.event.title}</li>
+                            <li><b>Nama Customer</b> : ${info.event.extendedProps.customer}</li>
+                            <li><b>Tanggal mulai</b> : ${moment(info.event.start).format('YYYY-MM-DD HH:mm')} </li>
+                            <li><b>Tanggal Berakhir</b> : ${moment(info.event.end).format('YYYY-MM-DD HH:mm')}</li>
+                        </ul>`,
+                })
+            }
+
         },
         tambah_date_off() {
             axios.post('/jadwal/tambah/off', this.form)

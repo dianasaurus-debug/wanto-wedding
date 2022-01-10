@@ -22,6 +22,15 @@ class BookingController extends Controller
             ->with('product', 'product.category', 'product.reviews')
             ->with('review')
             ->get();
+            foreach ($booking as $b){
+                if($b->status==4){
+                    if(Carbon::now()>Carbon::parse($b->end_booking)){
+                        $b->update(['status' => 7]);
+                    } else if(Carbon::now()<=Carbon::parse($b->end_booking)&&Carbon::now()>=Carbon::parse($b->start_booking)){
+                        $b->update(['status' => 6]);
+                    }
+                }
+            }
             $data = array(
                 'success' => true,
                 'message' => 'Berhasil menampilkan data booking',
@@ -47,6 +56,13 @@ class BookingController extends Controller
             ->with('product', 'product.category', 'product.reviews')
             ->with('review')
             ->first();
+            if($booking->status==4){
+                if(Carbon::now()>Carbon::parse($booking->end_booking)){
+                    $booking->update(['status' => 7]);
+                } else if(Carbon::now()<=Carbon::parse($booking->end_booking)&&Carbon::now()>=Carbon::parse($booking->start_booking)){
+                    $booking->update(['status' => 6]);
+                }
+            }
             $data = array(
                 'success' => true,
                 'message' => 'Berhasil menampilkan data booking',

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KategoriAdat;
+use App\Models\TemaKatalog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
-class KategoriAdatController extends Controller
+class TemaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,14 +17,14 @@ class KategoriAdatController extends Controller
     public function index()
     {
         if (request()->query('cari')) {
-            $alladat = KategoriAdat::where('nama_kategori', 'like', '%' . request()->query('cari') . '%')
+            $alltema = TemaKatalog::where('nama_tema', 'like', '%' . request()->query('cari') . '%')
                 ->latest()
                 ->paginate(7);
         } else {
-            $alladat = KategoriAdat::latest()
+            $alltema = TemaKatalog::latest()
                 ->paginate(7);
         }
-        return Inertia::render('KategoriAdat/Index', ['alladat' => $alladat]);
+        return Inertia::render('TemaKatalog/Index', ['alltema' => $alltema]);
     }
 
     /**
@@ -46,14 +46,14 @@ class KategoriAdatController extends Controller
     public function store(Request $request)
     {
         Validator::make($request->all(), [
-            'nama_kategori' => 'required',
+            'nama_tema' => 'required',
         ])->validate();
         try {
-            $kategoriadat = KategoriAdat::create([
-                'nama_kategori' => $request->nama_kategori,
+            $tema = TemaKatalog::create([
+                'nama_tema' => $request->nama_tema,
             ]);
             return redirect()->back()
-                ->with('message', 'Kategori adat Created Successfully.');
+                ->with('message', 'Kategori tema Created Successfully.');
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -90,18 +90,7 @@ class KategoriAdatController extends Controller
      */
     public function update(Request $request, $id)
     {
-        Validator::make($request->all(), [
-            'nama_kategori' => 'required',
-        ])->validate();
-        try {
-            $kategoriadat = KategoriAdat::where('id', $id)->first();
-            $kategoriadat->update(['nama_kategori' => $request->nama_kategori]);
-
-            return redirect()->back()
-                ->with('message', 'Kategori adat Updated Successfully.');
-        } catch (\Exception $e) {
-            return $e->getMessage();
-        }
+        //
     }
 
     /**
@@ -112,7 +101,6 @@ class KategoriAdatController extends Controller
      */
     public function destroy($id)
     {
-        KategoriAdat::find($id)->delete();
-        return redirect()->back()->with('message', 'Kategori adat Updated Successfully.');
+        //
     }
 }

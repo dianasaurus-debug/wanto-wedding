@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Intervention\Image\Facades\Image;
@@ -124,11 +125,13 @@ class JasaController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function edit($id)
     {
-        //
+        $allkategori = ProductCategory::get();
+        $product = Product::where('id', $id)->first();
+        return Inertia::render('Jasa/Edit', ['allkategori' => $allkategori, 'product'=>$product]);
     }
 
     /**
@@ -136,11 +139,55 @@ class JasaController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = Product::where('id', $id)->first();
+        $request->validate([
+            'nama' => 'required|string',
+            'harga' => 'required',
+            'deskripsi' => 'required',
+            'nominal_dp' => 'required',
+        ]);
+        try{
+            if($request->hasfile('cover')) {
+                $product_image = public_path('/images/uploads/'.$product->cover);
+                if(File::exists($product_image)) {
+                    File::delete($product_image);
+                }
+                $file_cover = $request->file('cover');
+                $file_ext = $file_cover->getClientOriginalExtension();
+                $file_name = 'vendor_cover_'.time().'.'.$file_ext;
+                $file_cover->move(public_path().'/images/uploads/', $file_name);
+                DB::table('products')->where('id', $id)->update([
+                    'nama' => $request->nama,
+                    'harga' => convert_to_nominal($request->harga),
+                    'deskripsi' => $request->deskripsi,
+                    'cover' => $file_name,
+                    'nominal_dp' => convert_to_nominal($request->nominal_dp),
+                    'category_id' => $request->category_id,
+                    'created_by' => Auth::id(),
+                ]);
+
+                return redirect()->route('jasa.index')
+                    ->with('message', 'Product Created Successfully.');
+            } else {
+                DB::table('products')->where('id', $id)->update([
+                    'nama' => $request->nama,
+                    'harga' => convert_to_nominal($request->harga),
+                    'deskripsi' => $request->deskripsi,
+                    'nominal_dp' => convert_to_nominal($request->nominal_dp),
+                    'category_id' => $request->category_id,
+                    'created_by' => Auth::id(),
+                ]);
+                return redirect()->route('jasa.index')
+                    ->with('message', 'Product Created Successfully.');
+            }
+
+        } catch (\Exception $e){
+            return $e->getMessage();
+        }
     }
 
     /**

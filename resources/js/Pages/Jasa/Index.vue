@@ -75,10 +75,9 @@
                                 <td class="border px-4 py-2">{{ row.harga }}</td>
                                 <td class="border px-4 py-2">{{ row.user.nama_depan }} {{row.user.nama_belakang}}</td>
                                 <td class="border px-4 py-2">
-                                    <button
-                                        class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded mr-2">
+                                    <inertia-link :href="route('jasa.edit', row.id)" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded mr-2">
                                         Ubah Data
-                                    </button>
+                                    </inertia-link>
                                     <button @click="deleteRow(row)"
                                         class="bg-red-500 hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded">Hapus
                                         Data

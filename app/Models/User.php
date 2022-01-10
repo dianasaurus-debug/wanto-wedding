@@ -29,6 +29,9 @@ class User extends Authenticatable
         'is_admin',
         'email',
         'password',
+        'alamat',
+        'fcm_token',
+        'profile_photo_path'
     ];
 
     /**
