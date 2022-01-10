@@ -1,5 +1,5 @@
 <template>
-    <app-layout title="Akun Bank">
+    <app-layout title="Tema Katalog">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Tema Katalog

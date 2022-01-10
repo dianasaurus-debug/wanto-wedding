@@ -90,7 +90,18 @@ class TemaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        Validator::make($request->all(), [
+            'nama_tema' => 'required',
+        ])->validate();
+        try {
+            $tema = TemaKatalog::where('id', $id)->first();
+            $tema->update(['nama_tema' => $request->nama_tema]);
+
+            return redirect()->back()
+                ->with('message', 'Kategori tema Updated Successfully.');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -101,6 +112,7 @@ class TemaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        TemaKatalog::find($id)->delete();
+        return redirect()->back()->with('message', 'Kategori tema Updated Successfully.');
     }
 }
