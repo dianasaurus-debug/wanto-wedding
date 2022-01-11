@@ -35,6 +35,7 @@ Route::post('/login', [APIAuthController::class, 'login']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/review/add', [APIJasaController::class, 'add_review'])->name('review.add');
     Route::get('/profile', [APIAuthController::class, 'profile']);
+    Route::get('/notifications', [APIAuthController::class, 'get_notifications']);
     Route::put('/update/profile', [APIAuthController::class, 'update']);
     Route::put('/change/password', [APIAuthController::class, 'change_password']);
 

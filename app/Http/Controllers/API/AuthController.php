@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -199,7 +200,7 @@ class AuthController extends Controller
             $user = auth()->user();
             if(Hash::check($request->password, $user->password)){
                 $found_user = User::where('id', $user->id)->first();
-                $found_user->update(['password'=>$request->new_password]);
+                $found_user->update(['password'=>Hash::make($request->new_password)]);
                 return response()
                     ->json([
                         'success' => true,
@@ -219,6 +220,30 @@ class AuthController extends Controller
                 ->json([
                     'success' => false,
                     'message' => 'Gagal menampilkan profil! Error : '.$e->getMessage(),
+                ]);
+        }
+    }
+    public function get_notifications(Request $request){
+        if(!auth()){
+            return response()
+                ->json([
+                    'success' => false,
+                    'message' => 'Unauthorized',
+                ]);
+        }
+        try {
+            $notifications = Notification::where('user_id', auth()->user()->id)->get();
+            return response()
+                ->json([
+                    'success' => true,
+                    'message' => 'Berhasil menampilkan notifikasi!',
+                    'data' => $notifications
+                ]);
+        } catch (\Exception $e){
+            return response()
+                ->json([
+                    'success' => false,
+                    'message' => 'Gagal menampilkan notifikasi! Error : '.$e->getMessage(),
                 ]);
         }
     }
