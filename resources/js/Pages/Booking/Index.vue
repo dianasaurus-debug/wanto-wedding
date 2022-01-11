@@ -44,6 +44,7 @@
                                 <th class="px-4 py-2">Customer</th>
                                 <th class="px-4 py-2">Mulai</th>
                                 <th class="px-4 py-2">Berakhir</th>
+                                <th class="px-4 py-2">Action</th>
 <!--                                <th class="px-4 py-2">Status Pembayaran</th>-->
                             </tr>
                             </thead>
@@ -54,7 +55,13 @@
                                 <td class="border px-4 py-2">{{ row.user.nama_depan+" "+row.user.nama_belakang }}</td>
                                 <td class="border px-4 py-2">{{ row.start_booking }}</td>
                                 <td class="border px-4 py-2">{{ row.end_booking }}</td>
-<!--                                <td class="border px-4 py-2">{{ row.payment_id == null ? status_pembayaran[0] : (row.payment.confirmed_at == null ? status_pembayaran[1] :status_pembayaran[2] ) }}</td>-->
+                                <td class="border px-4 py-2">
+                                <button v-if="mauSelesai(row)"
+                                    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" @click="changeStatus(row.id)">
+                                    {{ 'Selesaikan event'}}
+                                </button>
+                                </td>
+                                <!--                                <td class="border px-4 py-2">{{ row.payment_id == null ? status_pembayaran[0] : (row.payment.confirmed_at == null ? status_pembayaran[1] :status_pembayaran[2] ) }}</td>-->
 
                             </tr>
                             </tbody>
@@ -109,9 +116,41 @@ export default defineComponent({
         },
     },
     methods: {
+        mauSelesai(row){
+            return row.status==4||row.status==6;
+        },
+        selesai(row){
+            return row.status==7||row.status==8;
+        },
+        blmSelesai(row){
+            return row.status>=0&&row.status<=3;
+        },
+
         reset() {
             this.form = mapValues(this.form, () => null)
         },
+        changeStatus(data){
+            this.$swal.fire({
+                title: 'Apakah Anda ingin merubah status event menjadi selesai?',
+                showCancelButton: true,
+                confirmButtonText: 'Iya',
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    axios.put('/pembayaran/selesai/'+data)
+                        .then(res=>{
+                            if(res.data.success==true){
+                                this.$swal.fire('Event Selesai!', res.data.message, 'success');
+                                this.$inertia.get('booking')
+                            } else {
+                                this.$swal.fire('Gagal selesai!', res.data.message, 'error')
+                            }
+                        })
+                } else if (result.isDenied) {
+                    this.$swal.fire('Tidak jadi diselesaikan', '', 'info')
+                }
+            })
+        }
 
     },
     // methods: {

@@ -12,7 +12,7 @@ class JadwalController extends Controller
     public function index()
     {
         $jadwal_terpakai = Schedule::with('booking.product')
-            ->where('status', 1)
+            ->whereNotIn('status', [0,1,5])
             ->with('booking.user')
             ->get();
         $jadwal_off = Schedule::where('status', 0)

@@ -146,7 +146,7 @@ export default defineComponent({
             data_jadwal: [],
             calendarOptions: {
                 plugins: [dayGridPlugin, interactionPlugin],
-                initialView: 'dayGridMonth',
+                initialView: 'dayGridWeek',
                 nextDayThreshold: '00:00:00',
                 eventColor: 'green',
                 dateClick: this.handleDateClick,

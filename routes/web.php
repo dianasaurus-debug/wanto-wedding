@@ -49,5 +49,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
         Route::get('/', [PaymentController::class, 'index'])->name('index');
         Route::put('/{id}', [PaymentController::class, 'verifikasi'])->name('verifikasi');
+        Route::put('/selesai/{id}', [PaymentController::class, 'selesaikan_event'])->name('verifikasi');
     });
 });

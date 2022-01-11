@@ -79,4 +79,26 @@ class PaymentController extends Controller
 
     }
 
+    public function selesaikan_event(Request $request, $id)
+    {
+        try {
+            $booking = Booking::where('id', $id)
+                ->first();
+            $booking->update(['status'=>7]);
+                $data = [
+                    'success' => true,
+                    'data' => $booking,
+                    'message' => 'Event sudah selesai'
+                ];
+            return response()->json($data);
+        } catch (\Exception $exception){
+            $data = [
+                'success' => false,
+                'message' => 'Data event gagal selesai '.$exception->getMessage()
+            ];
+            return response()->json($data);
+        }
+
+    }
+
 }

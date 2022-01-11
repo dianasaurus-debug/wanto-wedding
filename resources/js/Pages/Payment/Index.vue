@@ -232,7 +232,7 @@ export default defineComponent({
             this.form = mapValues(this.form, () => null)
         },
         verifikasi(data){
-            let jenis_pembayaran = data.jenis_pembayaran == 0 ? 'DP' : 'Pelunasan';
+            let jenis_pembayaran = data.jenis_pembayaran == 2 ? 'DP' : 'Pelunasan';
             this.$swal.fire({
                 title: 'Apakah Anda ingin memverifikasi tagihan?',
                 showDenyButton: true,
