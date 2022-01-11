@@ -129,9 +129,9 @@
                         <div class="flex flex-row-reverse ...">
                             <div>
                                 <!-- Using utilities: -->
-                                <button class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                <inertia-link :href="route('jasa.index')" class="mr-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                                     Batal
-                                </button>
+                                </inertia-link>
                             </div>
                             <div class="mr-2">
                                 <!-- Using utilities: -->

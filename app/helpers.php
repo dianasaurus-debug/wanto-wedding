@@ -79,7 +79,7 @@ if (!function_exists('formatHargaJuta')) {
     }
 }
 if (!function_exists('similarityDistance')) {
-    function similarityDistance($preferences, $person1, $person2)
+    function similarityDistance($preferences, $person1, $person2) //masukan berupa user1 dan user2
     {
         $similar = array();
         $sum = 0;
@@ -91,16 +91,16 @@ if (!function_exists('similarityDistance')) {
         if (count($similar) == 0)
             return 0;
 
-        foreach ($preferences[$person1] as $key => $value) {
+        foreach ($preferences[$person1] as $key => $value) { //rumus mencari similiaritynya
             if (array_key_exists($key, $preferences[$person2]))
                 $sum = $sum + pow($value - $preferences[$person2][$key], 2);
         }
-        return 1 / (1 + sqrt($sum));
+        return 1 / (1 + sqrt($sum)); //hasil dari similarity user1 & user lain
 
     }
 }
 if (!function_exists('get_recommendations')) {
-    function get_recommendations($preferences, $person)
+    function get_recommendations($preferences, $person) //fungsi nyari rekomendasinya
     {
         $total = array();
         $simSums = array();
@@ -109,16 +109,15 @@ if (!function_exists('get_recommendations')) {
         $recommendations = array();
         $products = array();
         foreach ($preferences as $otherPerson => $values) {
-
             if ($otherPerson != $person) {
-                $sim = similarityDistance($preferences, $person, $otherPerson);
+                $sim = similarityDistance($preferences, $person, $otherPerson); //masukin similaritynya ke array biar gampang diakses
                 array_push($recommendations, $sim);
             }
 
             if ($sim > 0) {
                 foreach ($preferences[$otherPerson] as $key => $value) {
                     if (!array_key_exists($key, $preferences[$person])) {
-                        if (!array_key_exists($key, $total)) {
+                        if (!array_key_exists($key, $total)) { //dapetin semua barang/produk yang ada
                             $total[$key] = 0;
                         }
 
@@ -148,15 +147,15 @@ if (!function_exists('get_recommendations')) {
                     $value_rating = array();
                     foreach ($preferences[$otherPerson] as $key => $value) {
                         if ($key == $product) {
-                            $value_rating = $value;
-                            $value_recom = $recommendations[$k];
+                            $value_rating = $value; //nilai rating dari masing2 user
+                            $value_recom = $recommendations[$k]; //nilai similiaritynya
                             break;
                         } else {
-                            $value_rating = 0;
+                            $value_rating = 0; //nilai 0 kalau tidak kasih rating
                             $value_recom = 0;
                         }
                     }
-                    array_push($array_of_product, $value_rating);
+                    array_push($array_of_product, $value_rating); //array nilai rating yg dikasih user
                     array_push($new_recommendations, $value_recom);
                     $k++;
                 }
@@ -164,12 +163,12 @@ if (!function_exists('get_recommendations')) {
             $i=0;
             $total_down = 0;
             foreach ($new_recommendations as $recom){
-                $total_up+=($array_of_product[$i] * $recom);
-                $total_down+=$recom;
+                $total_up+=($array_of_product[$i] * $recom); //yang atas
+                $total_down+=$recom; // yang bawah similaritynya dijumlahin
                 $i++;
             }
-            $temp_result = $total_up/$total_down;
-            $array_of_rank["_{$product}"] = $temp_result;
+            $temp_result = $total_up/$total_down; //atas dibagi bawah
+            $array_of_rank["_{$product}"] = $temp_result; //naruh di masing2 produk
 
         }
         array_multisort($array_of_rank);
@@ -244,5 +243,15 @@ if(!function_exists('send_notification')){
         }
         curl_close($ch);
 
+    }
+}
+if (!function_exists('create_notification_data')) {
+    function create_notification_data($user,$title, $text)
+    {
+        return $notification = \App\Models\Notification::create([
+            'user_id' => $user,
+            'title' => $title,
+            'content' => $text
+        ]);
     }
 }

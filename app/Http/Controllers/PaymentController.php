@@ -28,6 +28,7 @@ class PaymentController extends Controller
         try {
             $payment = Payment::where('id', $id)->first();
             $booking = Booking::where('id', $payment->booking_id)
+                ->with('user')
                 ->with('product')
                 ->first();
             if($payment->status_pembayaran!=1){
@@ -38,7 +39,8 @@ class PaymentController extends Controller
                     $jadwal = Schedule::where('booking_id', $payment->booking_id)->first();
                     $jadwal->update(['status' => 1]);//diupdate ke sudah masuk jadwal
                     $nominal_pelunasan = generate_unique_price($booking->product->harga-$booking->product->nominal_dp);
-
+                    send_notification($booking->user->fcm_token,'Pembayaran DP Anda telah terverifikasi', 'Pembayaran DP terverifikasi pada '.$payment->confirmed_at.', Selanjutnya Anda dapat melunasi pembayaran sebelum event berlangsung');
+                    create_notification_data($booking->user->id, 'Pembayaran Pelunasan Anda telah terverifikasi', 'Pembayaran Pelunasan terverifikasi pada '.$payment->confirmed_at.', Silahkan menikmati acara Anda');
                     $payment_pelunasan = Payment::create([
                         'nominal' => $nominal_pelunasan["hasil"],
                         'kode_unik' => $nominal_pelunasan["kode_unik"],
@@ -47,11 +49,12 @@ class PaymentController extends Controller
                         'bank_account_id' => $payment->bank_account_id,
                         'booking_id' => $booking->id
                     ]);
-
                 } else {
                     $jadwal = Schedule::where('booking_id', $payment->booking_id)->first();
                     $jadwal->update(['status' => 1]);//diupdate ke sudah masuk jadwal
                     $booking->update(['status'=>4]);
+                    send_notification($booking->user->fcm_token,'Pembayaran Pelunasan Anda telah terverifikasi', 'Pembayaran Pelunasan terverifikasi pada '.$payment->confirmed_at.', Silahkan menikmati acara Anda');
+                    create_notification_data($booking->user->id, 'Pembayaran Pelunasan Anda telah terverifikasi', 'Pembayaran Pelunasan terverifikasi pada '.$payment->confirmed_at.', Silahkan menikmati acara Anda');
                 }
                 $data = [
                     'success' => true,

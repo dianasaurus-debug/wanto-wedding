@@ -315,7 +315,7 @@ class JasaController extends Controller
             $auth_user = User::where('id', auth()->id())->with('reviews.product')->first();
             $all_products = Product::get();
             $array_of_users_rating = array();
-            foreach ($users as $u) {
+            foreach ($users as $u) { //dapetin data review dari user
                 $array_ratings = array();
                 if (count($u->reviews) > 0)
                     foreach ($u->reviews as $review) {
@@ -330,9 +330,9 @@ class JasaController extends Controller
                 "user4" => array("samsung a10" => 4, "iphone 11" => 1),
                 "user5" => array("redmi note7" => 2, "vivo y91" => 2, "iphone 11" => 4, "redmi note5" => 5),
                 "user6" => array("samsung a10" => 2, "redmi note7" => 5, "iphone 11" => 4)
-            );
+            ); //dapet dari jurnal
             $qualified_users = array();
-            foreach ($users as $user) {
+            foreach ($users as $user) { //masukinn rating2 produknya ke masing2 usernya
                 $array_of_products = array();
                 if (count($user->reviews) > 0) {
                     array_push($qualified_users, $user);
@@ -348,7 +348,7 @@ class JasaController extends Controller
                 }
             }
             $id_of_products = array();
-            if (count($auth_user->reviews) > 0) {
+            if (count($auth_user->reviews) > 0) { //buat nampilin rankingnya
                 $array_of_recommendations = get_recommendations($array_of_users_rating, $auth_user->id);
                 arsort($array_of_recommendations);
                 $i = 0;
