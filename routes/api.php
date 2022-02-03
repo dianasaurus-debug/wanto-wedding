@@ -63,4 +63,6 @@ Route::get('thumbnails/vendor', [APIJasaController::class, 'getThumbnails']);
 Route::get('pencarian/terpopuler', [APIJasaController::class, 'getPencarianTerpopuler']);
 Route::get('categories/tema', [APIKategoriController::class, 'indexTema']);
 Route::get('categories/paket', [APIKategoriController::class, 'indexKategori']);
-
+Route::get('global/vendor/all', [APIJasaController::class, 'index_global']);
+Route::get('global/vendor/detail/{id}', [APIJasaController::class, 'show_global']);
+Route::get('global/vendor/lengkap', [APIJasaController::class, 'getPaketLengkap_global']);

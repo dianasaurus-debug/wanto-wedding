@@ -24,6 +24,12 @@
                         Vendor
                     </Link>
                 </SideBarLink>
+                <SideBarLink :active="route().current('paket-tambahan.index')">
+                    <i class="fas fa-briefcase h-6 w-6 fill-current mr-2"></i>
+                    <Link :href="route('paket-tambahan.index')" class="text-gray-700">
+                        Paket Tambahan
+                    </Link>
+                </SideBarLink>
 
                 <SideBarLink :active="route().current('booking.index')">
                     <i class="fas fa-folder-plus h-6 w-6 fill-current mr-2"></i>
@@ -49,6 +55,12 @@
                         Katalog
                     </Link>
                 </SideBarLink>
+                <SideBarLink :active="route().current('users.index')">
+                    <i class="fas fa-user h-6 w-6 fill-current mr-2"></i>
+                    <Link :href="route('users.index')" class="text-gray-700">
+                       Daftar Customer
+                    </Link>
+                </SideBarLink>
                 <SideBarLink :active="route().current('akun-bank.index')">
                     <i class="fas fa-money-check h-6 w-6 fill-current mr-2"></i>
                     <Link :href="route('akun-bank.index')" class="text-gray-700">
@@ -67,6 +79,7 @@
                         Kategori Tema
                     </Link>
                 </SideBarLink>
+
             </div>
 
         </div>

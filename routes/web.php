@@ -12,6 +12,8 @@ use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PaymentController;
 use \App\Http\Controllers\KategoriPaketController;
+use \App\Http\Controllers\CustomerController;
+use \App\Http\Controllers\PaketTambahanController;
 use \App\Http\Controllers\TemaController;
 /*
 |--------------------------------------------------------------------------
@@ -41,9 +43,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::post('/tambah/off', [JadwalController::class, 'add_tanggal_off'])->name('tambah-off');
     });
     Route::resource('jasa', JasaController::class);
+    Route::resource('paket-tambahan', PaketTambahanController::class);
     Route::resource('akun-bank', BankAccountController::class);
     Route::resource('post', PostController::class);
     Route::resource('booking', BookingController::class);
+    Route::resource('users', CustomerController::class);
     Route::resource('kategori-paket', KategoriPaketController::class);
     Route::resource('kategori-tema', TemaController::class);
     Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {

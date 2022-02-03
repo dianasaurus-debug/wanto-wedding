@@ -427,6 +427,83 @@ class JasaController extends Controller
         }
     }
 
+    public function index_global(Request $request)
+    {
+        try {
+            $all_jasa = Product::with('category')
+                ->with("booking")
+                ->with('reviews')
+                ->get()
+                ->groupBy('category_id'); //Proses mendapatkan data dari tabel product
+            $data = array(
+                'status' => 'success',
+                'message' => 'Berhasil menampilkan data vendor',
+                'data' => $all_jasa,
+            );
+            return response()->json($data);
+        } catch (\Exception $exception) {
+            $data = array(
+                [
+                    'status' => 'error',
+                    'message' => 'Terjadi kesalahan : ' . $exception->getMessage()
+                ]
+            );
+            return response()->json($data);
+        }
+    }
+    public function getPaketLengkap_global(Request $request)
+    {
+        try {
+            $new_jasa = array();
+            $paket_lengkap = Product::where('category_id', 1)
+                ->with('reviews')
+                ->with("booking")
+                ->with('category')->get();
+            $data = array(
+                'status' => 'success',
+                'message' => 'Berhasil menampilkan data paket lengkap',
+                'data' => $paket_lengkap,
+            );
+            return response()->json($data);
+        } catch (\Exception $exception) {
+            $data = array(
+                'status' => 'false',
+                'message' => $exception->getMessage(),
+            );
+            return response()->json($data);
+        }
+    }
+
+    public function show_global($id) // $id = 2
+    {
+        try {
+
+            $jasa = Product::where('id', $id)
+                ->with('reviews')
+                ->with("booking")
+                ->with('media') //dengan galerinya juga..
+                ->first();
+            $jasa->update(['jumlah_dilihat' => $jasa->jumlah_dilihat + 1]);
+            $product_resource = '';
+            if ($jasa)
+                $product_resource = new ProductResource($jasa);
+
+            $data = array(
+                'status' => 'success',
+                'message' => 'Berhasil menampilkan data vendor',
+                'data' => $product_resource,
+            );
+            return response()->json($data);
+        } catch (\Exception $exception) {
+            $data = array(
+                [
+                    'status' => 'error',
+                    'message' => 'Terjadi kesalahan : ' . $exception->getMessage()
+                ]
+            );
+            return response()->json($data);
+        }
+    }
 
 
 

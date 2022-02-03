@@ -29,6 +29,14 @@ class Booking extends Model
     {
         return $this->hasOne(Review::class, 'booking_id', 'id');
     }
+    public function services()
+    {
+        return $this->belongsToMany(
+            AdditionalService::class,
+            'bookings_services',
+            'additional_service_id',
+            'booking_id');
+    }
 
     public function scopeFilter($query, array $filters)
     {
